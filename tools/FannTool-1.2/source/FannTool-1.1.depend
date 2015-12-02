@@ -1,0 +1,389 @@
+# depslib dependency file v1.0
+1205617546 source:d:\projects\fanntool-1.1\fl_plotxy.cxx
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"Fl_PlotXY.H"
+	<windows.h>
+	"Rotated.H"
+
+1113480360 d:\projects\fanntool-1.1\fl_plotxy.h
+	<FL/Fl_Widget.H>
+	<FL/fl_draw.H>
+
+1286039126 c:\fltk-1.1.10\fl\fl_widget.h
+	"Enumerations.H"
+
+1312207291 c:\fltk-1.1.10\fl\enumerations.h
+	"Fl_Export.H"
+
+1286039124 c:\fltk-1.1.10\fl\fl_export.h
+
+1286039124 c:\fltk-1.1.10\fl\fl_draw.h
+	"Enumerations.H"
+
+1100062380 d:\projects\fanntool-1.1\rotated.h
+
+1100062380 source:d:\projects\fanntool-1.1\rotated.c
+	<FL/x.H>
+	<FL/fl_draw.H>
+	"Rotated.H"
+	<stdlib.h>
+	<string.h>
+	<stdio.h>
+
+1286039128 c:\fltk-1.1.10\fl\x.h
+	"Enumerations.H"
+	"win32.H"
+	"mac.H"
+	<X11/Xlib.h>
+	<X11/Xutil.h>
+	<X11/Xatom.h>
+	"Fl_Window.H"
+
+1286039126 c:\fltk-1.1.10\fl\win32.h
+	<windows.h>
+	"Fl_Window.H"
+
+1286039126 c:\fltk-1.1.10\fl\fl_window.h
+	"Fl_Group.H"
+
+1286039124 c:\fltk-1.1.10\fl\fl_group.h
+	"Fl_Widget.H"
+
+1286039126 c:\fltk-1.1.10\fl\mac.h
+	<Carbon/Carbon.h>
+	"Fl_Window.H"
+
+1273891078 source:d:\projects\fanntool-1.1\dataprocess.cpp
+	"DataProcess.h"
+
+1247279644 d:\projects\fanntool-1.1\dataprocess.h
+	<iostream>
+	<fstream>
+	<string>
+	<vector>
+	<stdlib.h>
+	<time.h>
+
+1272688786 source:d:\projects\fanntool-1.1\fanntool.rc
+	"fanntoolrc.h"
+
+1250301346 d:\projects\fanntool-1.1\fanntoolrc.h
+
+1276412890 source:d:\projects\fanntool-1.1\main.cpp
+	"main.h"
+	"fanntoolrc.h"
+	<X11/xpm.h>
+	"fanntool_icon.xpm"
+	<FL/Fl_Image.H>
+
+1276412890 d:\projects\fanntool-1.1\main.h
+	<FL/Fl.H>
+	<string>
+	<math.h>
+	<deque>
+	"Fl_PlotXY.H"
+	"DataProcess.h"
+	"FileSelect.h"
+	<FL/fl_ask.H>
+	<FL/Fl_Float_Input.H>
+	<FL/Fl_File_Chooser.H>
+	<FL/Fl_Chart.H>
+	<FL/filename.H>
+	<stdio.h>
+	<fann.h>
+	<FL/Fl_Double_Window.H>
+	<FL/Fl_Menu_Bar.H>
+	<FL/Fl_Group.H>
+	<FL/Fl_Input.H>
+	<FL/Fl_Repeat_Button.H>
+	<FL/Fl_Value_Output.H>
+	<FL/Fl_Spinner.H>
+	<FL/Fl_Choice.H>
+	<FL/Fl_Value_Input.H>
+	<FL/Fl_Tabs.H>
+	<FL/Fl_Browser.H>
+	<FL/Fl_Counter.H>
+	<FL/Fl_Check_Button.H>
+	<FL/Fl_Button.H>
+	<FL/Fl_Menu_Button.H>
+	<FL/Fl_Scroll.H>
+	<FL/Fl_Return_Button.H>
+	<FL/Fl_Box.H>
+	<FL/Fl_Output.H>
+	<FL/Fl_Help_View.H>
+	<FL/Fl_Round_Button.H>
+	<FL/Fl_Value_Slider.H>
+	<FL/Fl_Light_Button.H>
+
+1286039124 c:\fltk-1.1.10\fl\fl.h
+	"Enumerations.H"
+
+1286039124 c:\fltk-1.1.10\fl\fl_ask.h
+	"Enumerations.H"
+
+1286039122 c:\fltk-1.1.10\fl\fl_float_input.h
+	"Fl_Input.H"
+
+1286039124 c:\fltk-1.1.10\fl\fl_input.h
+	"Fl_Input_.H"
+
+1286039124 c:\fltk-1.1.10\fl\fl_input_.h
+	"Fl_Widget.H"
+
+1286039124 c:\fltk-1.1.10\fl\fl_file_chooser.h
+	<FL/Fl.H>
+	<FL/Fl_Double_Window.H>
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<FL/Fl_Group.H>
+	<FL/Fl_Choice.H>
+	<FL/Fl_Menu_Button.H>
+	<FL/Fl_Button.H>
+	<FL/Fl_Preferences.H>
+	<FL/Fl_Tile.H>
+	<FL/Fl_File_Browser.H>
+	<FL/Fl_Box.H>
+	<FL/Fl_Check_Button.H>
+	<FL/Fl_File_Input.H>
+	<FL/Fl_Return_Button.H>
+	<FL/fl_ask.H>
+
+1286039124 c:\fltk-1.1.10\fl\fl_double_window.h
+	"Fl_Window.H"
+
+1286039124 c:\fltk-1.1.10\fl\fl_choice.h
+	"Fl_Menu_.H"
+
+1286039124 c:\fltk-1.1.10\fl\fl_menu_.h
+	"Fl_Widget.H"
+	"Fl_Menu_Item.H"
+
+1286039124 c:\fltk-1.1.10\fl\fl_menu_item.h
+	"Fl_Widget.H"
+	"Fl_Image.H"
+
+1286039124 c:\fltk-1.1.10\fl\fl_image.h
+	"Enumerations.H"
+
+1286039124 c:\fltk-1.1.10\fl\fl_menu_button.h
+	"Fl_Menu_.H"
+
+1286039124 c:\fltk-1.1.10\fl\fl_button.h
+	"Fl_Widget.H"
+
+1286039124 c:\fltk-1.1.10\fl\fl_preferences.h
+	<windows.h>
+	<stdio.h>
+	"Fl_Export.H"
+
+1286039126 c:\fltk-1.1.10\fl\fl_tile.h
+	"Fl_Group.H"
+
+1286039124 c:\fltk-1.1.10\fl\fl_file_browser.h
+	"Fl_Browser.H"
+	"Fl_File_Icon.H"
+	"filename.H"
+
+1286039124 c:\fltk-1.1.10\fl\fl_browser.h
+	"Fl_Browser_.H"
+
+1286039124 c:\fltk-1.1.10\fl\fl_browser_.h
+	"Fl_Group.H"
+	"Fl_Scrollbar.H"
+
+1286039126 c:\fltk-1.1.10\fl\fl_scrollbar.h
+	"Fl_Slider.H"
+
+1286039126 c:\fltk-1.1.10\fl\fl_slider.h
+	"Fl_Valuator.H"
+
+1286039126 c:\fltk-1.1.10\fl\fl_valuator.h
+	"Fl_Widget.H"
+
+1286039124 c:\fltk-1.1.10\fl\fl_file_icon.h
+	"Fl.H"
+
+1286039124 c:\fltk-1.1.10\fl\filename.h
+	"Fl_Export.H"
+	<sys/types.h>
+	"/usr/include/dirent.h"
+	<sys/types.h>
+	<direct.h>
+	<sys/types.h>
+	<dirent.h>
+
+1286039124 c:\fltk-1.1.10\fl\fl_box.h
+	"Fl_Widget.H"
+
+1286039124 c:\fltk-1.1.10\fl\fl_check_button.h
+	"Fl_Light_Button.H"
+
+1286039124 c:\fltk-1.1.10\fl\fl_light_button.h
+	"Fl_Button.H"
+
+1286039124 c:\fltk-1.1.10\fl\fl_file_input.h
+	<FL/Fl_Input.H>
+
+1286039124 c:\fltk-1.1.10\fl\fl_return_button.h
+	"Fl_Button.H"
+
+1286039122 c:\fltk-1.1.10\fl\fl_chart.h
+	"Fl_Widget.H"
+
+1268458475 c:\fann-2.1.0\include\fann.h
+	"fixedfann.h"
+	"floatfann.h"
+	<sys/time.h>
+	<windows.h>
+	"fann_error.h"
+	"fann_activation.h"
+	"fann_data.h"
+	"fann_internal.h"
+	"fann_train.h"
+	"fann_cascade.h"
+	"fann_io.h"
+
+1268458475 c:\fann-2.1.0\include\fixedfann.h
+	"fann.h"
+
+1268458475 c:\fann-2.1.0\include\floatfann.h
+	"fann.h"
+
+1268458475 c:\fann-2.1.0\include\fann_error.h
+	<stdio.h>
+
+1268458475 c:\fann-2.1.0\include\fann_activation.h
+
+1268458475 c:\fann-2.1.0\include\fann_data.h
+	<stdio.h>
+
+1268458475 c:\fann-2.1.0\include\fann_internal.h
+	<math.h>
+	<stdio.h>
+	<stdlib.h>
+	"fann_data.h"
+
+1268458475 c:\fann-2.1.0\include\fann_train.h
+
+1268458475 c:\fann-2.1.0\include\fann_cascade.h
+
+1268458475 c:\fann-2.1.0\include\fann_io.h
+
+1286039123 c:\fltk-1.1.10\fl\fl_menu_bar.h
+	"Fl_Menu_.H"
+
+1286039123 c:\fltk-1.1.10\fl\fl_repeat_button.h
+	"Fl.H"
+	"Fl_Button.H"
+
+1286039124 c:\fltk-1.1.10\fl\fl_value_output.h
+	"Fl_Valuator.H"
+
+1286039124 c:\fltk-1.1.10\fl\fl_spinner.h
+	<FL/Enumerations.H>
+	<FL/Fl_Group.H>
+	<FL/Fl_Input.H>
+	<FL/Fl_Repeat_Button.H>
+	<stdio.h>
+	<stdlib.h>
+
+1286039124 c:\fltk-1.1.10\fl\fl_value_input.h
+	"Fl_Valuator.H"
+	"Fl_Input.H"
+
+1286039124 c:\fltk-1.1.10\fl\fl_tabs.h
+	"Fl_Group.H"
+
+1286039122 c:\fltk-1.1.10\fl\fl_counter.h
+	"Fl_Valuator.H"
+
+1286039124 c:\fltk-1.1.10\fl\fl_scroll.h
+	"Fl_Group.H"
+	"Fl_Scrollbar.H"
+
+1286039123 c:\fltk-1.1.10\fl\fl_output.h
+	"Fl_Input.H"
+
+1286039124 c:\fltk-1.1.10\fl\fl_round_button.h
+	"Fl_Light_Button.H"
+
+1286039124 c:\fltk-1.1.10\fl\fl_value_slider.h
+	"Fl_Slider.H"
+
+1276413222 source:d:\projects\fanntool-1.1\fileselect.cpp
+	"FileSelect.h"
+
+1276413230 d:\projects\fanntool-1.1\fileselect.h
+	"fl_ext_file_chooser.h"
+	<stdio.h>
+
+1102831250 d:\projects\fanntool-1.1\fl_ext_file_chooser.h
+
+1272914252 source:d:\projects\fanntool-1.1\fl_ext_file_chooser.cpp
+	"fl_ext_file_chooser.h"
+	<stdlib.h>
+	<string.h>
+	<FL/Fl.H>
+	<FL/x.H>
+	<commdlg.h>
+	<dlgs.h>
+	<cderr.h>
+	<string>
+	<FL/Fl.H>
+	<FL/Fl_File_Chooser.H>
+
+1273174688 d:\projects\fanntool-1.1\fanntool_icon.xpm
+
+1286039123 c:\fltk-1.1.10\fl\fl_help_view.h
+	<stdio.h>
+	"Fl.H"
+	"Fl_Group.H"
+	"Fl_Scrollbar.H"
+	"fl_draw.H"
+	"Fl_Shared_Image.H"
+
+1286039124 c:\fltk-1.1.10\fl\fl_shared_image.h
+	"Fl_Image.H"
+
+1286039284 c:\fann-2.1.0\src\include\fann.h
+	"fixedfann.h"
+	"floatfann.h"
+	<sys/time.h>
+	<windows.h>
+	"fann_error.h"
+	"fann_activation.h"
+	"fann_data.h"
+	"fann_internal.h"
+	"fann_train.h"
+	"fann_cascade.h"
+	"fann_io.h"
+
+1286039286 c:\fann-2.1.0\src\include\fixedfann.h
+	"fann.h"
+
+1286039286 c:\fann-2.1.0\src\include\floatfann.h
+	"fann.h"
+
+1286039286 c:\fann-2.1.0\src\include\fann_error.h
+	<stdio.h>
+
+1286039286 c:\fann-2.1.0\src\include\fann_activation.h
+
+1286039286 c:\fann-2.1.0\src\include\fann_data.h
+	<stdio.h>
+
+1286039286 c:\fann-2.1.0\src\include\fann_internal.h
+	<math.h>
+	<stdio.h>
+	<stdlib.h>
+	"fann_data.h"
+
+1286039286 c:\fann-2.1.0\src\include\fann_train.h
+
+1286039286 c:\fann-2.1.0\src\include\fann_cascade.h
+
+1286039286 c:\fann-2.1.0\src\include\fann_io.h
+

@@ -1,0 +1,46 @@
+/* XPM */
+
+static char * XFACE[] = {
+/* <Values> */
+"48 4 2 1",
+/* <Colors> */
+"a c #ffffff",
+"b c #000000",
+/* <Pixels> */
+"abaabaababaaabaabababaabaabaababaabaaababaabaaab",
+"abaabaababaaabaabababaabaabaababaabaaababaabaaab",
+"abaabaababaaabaabababaabaabaababaabaaababaabaaab",
+"abaabaababaaabaabababaabaabaababaabaaababaabaaab"
+};
+
+
+
+static char * fanntool_icon_xpm[] = {
+"16 16 9 1",
+" 	c None",
+"!	c #0071BC",
+"#	c black",
+"$	c white",
+"%	c #0A7FC5",
+"&	c #1C98D6",
+"'	c #29ABE2",
+"(	c #148ECF",
+")	c #26A7DF",
+"!!!!!!!!!       ",
+"!$$$$!!!!!      ",
+"!$$$$!!!!!!     ",
+"!$$!!!!!!!!     ",
+"!$$!!!!!!!!     ",
+"!$$$$!!%&'''''  ",
+"!$$$$!!'''''''' ",
+"!$$!!'''''''''''",
+"!$$!!'''''''''''",
+"!$$(''########''",
+"!$$)''########''",
+"!!!''''''##'''''",
+"!!!''''''##'''''",
+"   ''''''##'''''",
+"   ''''''##'''''",
+"   ''''''##'''''"};
+
+

@@ -1,0 +1,15 @@
+FANNTool is a GUI to the FANN library which allows its easy usage without the need o programming. 
+
+FANNTool distrubuted with executable form for windows But FANNTool is a Cross-Platform.
+So you can compile it for your Operating System.
+
+to Compile it
+
+Requirements
+
+FLTK 1.3 : http://www.fltk.org/software.php?VERSION=1.3.0
+FANN 2.2 : http://leenissen.dk/fann/wp/download/
+
+if compiling is difficult for you 
+install Wine ( http://www.winehq.org/download )
+and Run windows version with Wine

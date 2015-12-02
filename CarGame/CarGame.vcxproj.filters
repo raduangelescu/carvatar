@@ -1,0 +1,94 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="Car.h">
+      <Filter>CarPhysics</Filter>
+    </ClInclude>
+    <ClInclude Include="CarModel.h">
+      <Filter>CarPhysics</Filter>
+    </ClInclude>
+    <ClInclude Include="Box2DDebugDraw.h">
+      <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="glesProgram.h">
+      <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Track.h">
+      <Filter>Track</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector2.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Common.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="defines.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="IController.h">
+      <Filter>Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerController.h">
+      <Filter>Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="AINNController.h">
+      <Filter>Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicAIController.h">
+      <Filter>Controllers</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="CarGame.cpp" />
+    <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="Car.cpp">
+      <Filter>CarPhysics</Filter>
+    </ClCompile>
+    <ClCompile Include="CarModel.cpp">
+      <Filter>CarPhysics</Filter>
+    </ClCompile>
+    <ClCompile Include="Box2DDebugDraw.cpp">
+      <Filter>Render</Filter>
+    </ClCompile>
+    <ClCompile Include="glesProgram.cpp">
+      <Filter>Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Track.cpp">
+      <Filter>Track</Filter>
+    </ClCompile>
+    <ClCompile Include="Common.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerController.cpp">
+      <Filter>Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="AINNController.cpp">
+      <Filter>Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="BasicAiController.cpp">
+      <Filter>Controllers</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CarPhysics">
+      <UniqueIdentifier>{5c1cf8fc-e69a-4f8c-9d1f-ae0b6d892bbd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Render">
+      <UniqueIdentifier>{b3506149-c52f-4198-9072-92eb360a2a71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Track">
+      <UniqueIdentifier>{fdd21930-3120-432b-a9d0-5589b67fbb65}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utils">
+      <UniqueIdentifier>{976d724f-5b72-4ce6-ac61-6171e9e469bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Controllers">
+      <UniqueIdentifier>{7b446097-d573-4bc7-8364-872c7c20eab7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
