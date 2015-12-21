@@ -240,7 +240,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 
 	Render_end();
-	g_trackInfo->destroyGround();
+	g_trackInfo->destroyPhysicsBody();
 	delete car;
 
 	Track_end();

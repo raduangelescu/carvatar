@@ -7,19 +7,18 @@
 
 enum INPUT_ACTIONS 
 {
-	TDC_LEFT = 0x1,
-	TDC_RIGHT = 0x2,
-	TDC_UP = 0x4,
-	TDC_DOWN = 0x8
+	IA_LEFT = 0x1,
+	IA_RIGHT = 0x2,
+	IA_UP = 0x4,
+	IA_DOWN = 0x8
 };
-
 
 
 //types of fixture user data
 enum fixtureUserDataType 
 {
 	FUD_CAR_TIRE,
-	FUD_GROUND_AREA
+	FUD_RACE_SECTOR
 };
 
 //a class to allow subclassing of different fixture user data

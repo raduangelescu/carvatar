@@ -4,25 +4,15 @@
 
 extern PhysicsData g_physicsInfo;
 
-RaceSectorFUD::RaceSectorFUD(int _idx) : FixtureUserData(FUD_GROUND_AREA)
-{
-	idx = _idx;
-}
-
-GroundAreaFUD::GroundAreaFUD(float fm, bool ooc) : FixtureUserData(FUD_GROUND_AREA) 
-{
-	frictionModifier = fm;
-	outOfCourse = ooc;
-}
+RaceSectorFUD::RaceSectorFUD(int _idx) : FixtureUserData(FUD_RACE_SECTOR), idx(_idx){}
 
 CTrack::CTrack()
 {
 
 }
-void CTrack::destroyGround()
+
+void CTrack::destroyPhysicsBody()
 {
-	m_groundBody->SetActive(false);
-	g_physicsInfo.world->Step(0, 0, 0);
 	g_physicsInfo.world->DestroyBody(m_groundBody);
 }
 
@@ -113,7 +103,7 @@ void CTrack::genCenterline(b2Vec2 *points)
 
 }
 
-void	CTrack::genPhysicsTrackRepresentation()
+void CTrack::genPhysicsTrackRepresentation()
 {
 	b2BodyDef bodyDef;
 	m_groundBody = g_physicsInfo.world->CreateBody(&bodyDef);
@@ -224,7 +214,7 @@ void CTrack::genTrack()
 	delete[] centerlinePoints;
 }
 
-void	CTrack::loadSettingsFromTOML(const char *filename)
+void CTrack::loadSettingsFromTOML(const char *filename)
 {
 	std::ifstream ifs(filename);
 	toml::Parser parser(ifs);

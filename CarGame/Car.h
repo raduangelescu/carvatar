@@ -14,6 +14,19 @@ struct CarSensorData
 
 class TopdownCar : public b2ContactListener
 {
+
+	struct STopDownCarSettings
+	{
+		float max_forward_speed;
+		float max_backward_speed;
+		float back_tire_max_drive_force;
+		float front_tire_max_drive_force;
+		float back_tire_max_lateral_impulse;
+		float front_tire_max_lateral_impulse;
+		float body_density;
+		
+	}m_settings; // read from TOML file
+
 	CarSensorData	m_sensorData;
 private:
 	float Raycast(b2Vec2 dir, float distance);
@@ -30,7 +43,7 @@ public:
 	void BeginContact(b2Contact* contact) { handleContact(contact, true); }
 	void EndContact(b2Contact* contact) { handleContact(contact, false); }
 
-	void tire_vs_groundArea(b2Fixture* tireFixture, b2Fixture* groundAreaFixture, bool began);
+	void tireVsGroundArea(b2Fixture* tireFixture, b2Fixture* groundAreaFixture, bool began);
 	void step();
 
 	b2Vec2 getPosition();

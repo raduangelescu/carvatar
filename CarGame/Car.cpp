@@ -10,23 +10,17 @@ extern Box2DDebugDraw* g_debugDraw;
 
 TopdownCar::TopdownCar()
 {
+	m_car					= new TDCar(g_physicsInfo.world);
+	m_currentRaceSectorIdx	= 0;
+	m_controlState			= 0;
 
 	g_physicsInfo.world->SetGravity(b2Vec2(0, 0));
-	m_car = new TDCar(g_physicsInfo.world);
-	m_currentRaceSectorIdx = 0;
-
-	//m_tire = new TDTire(m_world);
-	//m_tire->setCharacteristics(100, -20, 150);
-	
-
-
-	m_controlState = 0;
 }
 
 void TopdownCar::setPosition(b2Vec2 pos)
 {
 	m_car->setPosition(pos);
-	m_car->setTransform(pos, -1.5707f);
+	m_car->setTransform(pos, glm::radians(-90.0));
 }
 
 TopdownCar::~TopdownCar()
@@ -39,16 +33,16 @@ void TopdownCar::keyboard(unsigned char key)
 	switch (key)
 	{
 	case 'a': 
-		m_controlState |= TDC_LEFT; 
+		m_controlState |= IA_LEFT; 
 		break;
 	case 'd': 
-		m_controlState |= TDC_RIGHT; 
+		m_controlState |= IA_RIGHT; 
 		break;
 	case 'w': 
-		m_controlState |= TDC_UP; 
+		m_controlState |= IA_UP; 
 		break;
 	case 's': 
-		m_controlState |= TDC_DOWN; 
+		m_controlState |= IA_DOWN; 
 		break;
 	}
 }
@@ -58,16 +52,16 @@ void TopdownCar::keyboardUp(unsigned char key)
 	switch (key) 
 	{
 	case 'a': 
-		m_controlState &= ~TDC_LEFT;
+		m_controlState &= ~IA_LEFT;
 		break;
 	case 'd': 
-		m_controlState &= ~TDC_RIGHT; 
+		m_controlState &= ~IA_RIGHT; 
 		break;
 	case 'w': 
-		m_controlState &= ~TDC_UP; 
+		m_controlState &= ~IA_UP; 
 		break;
 	case 's': 
-		m_controlState &= ~TDC_DOWN; 
+		m_controlState &= ~IA_DOWN; 
 		break;
 	}
 }
@@ -83,14 +77,14 @@ void TopdownCar::handleContact(b2Contact* contact, bool began)
 		return;
 
 
-	if (fudA->getType() == FUD_CAR_TIRE || fudB->getType() == FUD_GROUND_AREA)
-		tire_vs_groundArea(a, b, began);
-	else if (fudA->getType() == FUD_GROUND_AREA || fudB->getType() == FUD_CAR_TIRE)
-		tire_vs_groundArea(b, a, began);
+	if (fudA->getType() == FUD_CAR_TIRE || fudB->getType() == FUD_RACE_SECTOR)
+		tireVsGroundArea(a, b, began);
+	else if (fudA->getType() == FUD_RACE_SECTOR || fudB->getType() == FUD_CAR_TIRE)
+		tireVsGroundArea(b, a, began);
 
 }
 
-void TopdownCar::tire_vs_groundArea(b2Fixture* tireFixture, b2Fixture* groundAreaFixture, bool began)
+void TopdownCar::tireVsGroundArea(b2Fixture* tireFixture, b2Fixture* groundAreaFixture, bool began)
 {
 	TDTire* tire = (TDTire*)tireFixture->GetBody()->GetUserData();
 	RaceSectorFUD* gaFud = (RaceSectorFUD*)groundAreaFixture->GetUserData();
@@ -110,6 +104,7 @@ b2Vec2 TopdownCar::getPosition()
 {
 	return m_car->getBody()->GetPosition();
 }
+
 float TopdownCar::Raycast(b2Vec2 dir, float distance)
 {
 	b2RayCastInput input;
@@ -123,17 +118,20 @@ float TopdownCar::Raycast(b2Vec2 dir, float distance)
 	//check every fixture of every body to find closest
 	float closestFraction = 1; //start with end of line as p2
 	b2Vec2 intersectionNormal(0, 0);
-	for (b2Body* b = g_physicsInfo.world->GetBodyList(); b; b = b->GetNext()) {
+	for (b2Body* b = g_physicsInfo.world->GetBodyList(); b; b = b->GetNext()) 
+	{
 		if (b == m_car->getBody() || b->GetType() != b2_staticBody)
 			continue;
-		for (b2Fixture* f = b->GetFixtureList(); f; f = f->GetNext()) {
+		for (b2Fixture* f = b->GetFixtureList(); f; f = f->GetNext()) 
+		{
 			if (f->IsSensor() == true)
 				continue;
 			b2RayCastOutput output;
 			
 			if (!f->RayCast(&output, input,0))
 				continue;
-			if (output.fraction < closestFraction) {
+			if (output.fraction < closestFraction) 
+			{
 				closestFraction = output.fraction;
 				intersectionNormal = output.normal;
 			}

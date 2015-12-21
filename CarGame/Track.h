@@ -13,15 +13,6 @@ public:
 
 };
 
-//class to allow marking a fixture as a ground area
-class GroundAreaFUD : public FixtureUserData 
-{
-public:
-	float frictionModifier;
-	bool outOfCourse;
-
-	GroundAreaFUD(float fm, bool ooc);
-};
 
 struct SGenTrackNode
 {
@@ -57,28 +48,28 @@ class CTrack
 
 	float		 m_trackLength;
 
-	std::set<GroundAreaFUD*> m_groundAreas;
 	SGenTrackNode			*m_points;
 	b2Body					*m_groundBody;
 
 private:
 	void			lerpInterval(int startIdx, int endIdx, b2Vec2* points, int size);
+	void			genCenterline(b2Vec2 *points);
+	void			genLogicalTrackRepresentation(b2Vec2 *points);
+	void			genPhysicsTrackRepresentation();
 
 public:
 	CTrack();
 	~CTrack();
 	void			loadSettingsFromTOML(const char *filename);
 	void			genTrack();
-	void			genCenterline(b2Vec2 *points);
-	void			genLogicalTrackRepresentation(b2Vec2 *points);
-	void			genPhysicsTrackRepresentation();
+
 	float			getDistanceToFinishLine(const unsigned int idx);
 	float			getTotalTrackLength() { return m_trackLength; }
 	SGenTrackNode & getTrackPoint(const unsigned int idx);
 	unsigned int	getFinishLineRaceSectorIdx() { return m_finishLineRaceSectorIdx; }
 	b2Body*			getGroundBody() { return m_groundBody; }
-	std::set<GroundAreaFUD*> & getGroundAreas() { return m_groundAreas; }
-	void destroyGround();
+	
+	void destroyPhysicsBody();
 	void clear();
 	
 };

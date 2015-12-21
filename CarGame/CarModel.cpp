@@ -2,6 +2,7 @@
 #include "stdafx.h"
 #include "CarModel.h"
 #include "Track.h"
+#include <tinytoml.h>
 
 extern PhysicsData	g_physicsInfo;
 extern CTrack*		g_trackInfo;
@@ -42,20 +43,7 @@ void TDTire::setCharacteristics(float maxForwardSpeed, float maxBackwardSpeed, f
 
 void TDTire::updateTraction()
 {
-	std::set<GroundAreaFUD*> & groudnAreas = g_trackInfo->getGroundAreas(); 
-	if (groudnAreas.empty())
-		m_currentTraction = 1;
-	else {
-		//find area with highest traction
-		m_currentTraction = 0;
-		std::set<GroundAreaFUD*>::iterator it = groudnAreas.begin();
-		while (it != groudnAreas.end()) {
-			GroundAreaFUD* ga = *it;
-			if (ga->frictionModifier > m_currentTraction)
-				m_currentTraction = ga->frictionModifier;
-			++it;
-		}
-	}
+	m_currentTraction = 1;
 }
 
 b2Vec2 TDTire::getLateralVelocity() 
@@ -93,10 +81,15 @@ void TDTire::updateDrive(int controlState)
 	m_body->SetAwake(true);
 	//find desired speed
 	float desiredSpeed = 0;
-	switch (controlState & (TDC_UP | TDC_DOWN)) {
-	case TDC_UP:   desiredSpeed = m_maxForwardSpeed;  break;
-	case TDC_DOWN: desiredSpeed = m_maxBackwardSpeed; break;
-	default: return;//do nothing
+	switch (controlState & (IA_UP | IA_DOWN)) 
+	{
+		case IA_UP:   
+			desiredSpeed = m_maxForwardSpeed;  
+			break;
+		case IA_DOWN: 
+			desiredSpeed = m_maxBackwardSpeed; 
+			break;
+		default: return;//do nothing
 	}
 
 	//find current speed in forward direction
@@ -117,10 +110,10 @@ void TDTire::updateDrive(int controlState)
 void TDTire::updateTurn(int controlState)
 {
 	float desiredTorque = 0;
-	switch (controlState & (TDC_LEFT | TDC_RIGHT)) 
+	switch (controlState & (IA_LEFT | IA_RIGHT)) 
 	{
-		case TDC_LEFT:  desiredTorque = 15;  break;
-		case TDC_RIGHT: desiredTorque = -15; break;
+		case IA_LEFT:  desiredTorque = 15;  break;
+		case IA_RIGHT: desiredTorque = -15; break;
 		default:;//nothing
 	}
 	
@@ -144,83 +137,75 @@ b2Vec2  TDCar::getDirection()
 
 TDCar::TDCar(b2World* world) 
 {
+	std::ifstream ifs("carsetup.TOML");
+	toml::Parser parser(ifs);
+	
+	toml::Value documentRoot = parser.parse();
+	toml::Value* params = documentRoot.find("carparams");
+
+	float maxForwardSpeed			= (float)params->find("max_forward_speed")->as<double>();
+	float maxBackwardSpeed			= (float)params->find("max_backward_speed")->as<double>();
+	float backTireMaxDriveForce		= (float)params->find("back_tire_max_drive_force")->as<double>();
+	float frontTireMaxDriveForce	= (float)params->find("front_tire_max_drive_force")->as<double>();
+	float backTireMaxLateralImpulse = (float)params->find("back_tire_max_lateral_impulse")->as<double>();
+	float frontTireMaxLateralImpulse= (float)params->find("front_tire_max_lateral_impulse")->as<double>();
+	float angularDamping			= (float)params->find("angular_damping")->as<double>();
+	float bodyDensity				= (float)params->find("body_density")->as<double>();
+
+	
+	toml::Value* carBodyParams = documentRoot.find("carbody");
+
+	const toml::Array& bodyVertices = carBodyParams->find("body_vertices")->as<toml::Array>();
+	
+	b2Vec2 *vertices = new b2Vec2[bodyVertices.size()];
+	unsigned int k = 0;
+	for (const toml::Value& v : bodyVertices)
+	{
+		const toml::Array& bodyVerticesCoords = v.as<toml::Array>();
+		vertices[k++].Set(bodyVerticesCoords.at(0).asNumber(), bodyVerticesCoords.at(1).asNumber());
+	}
 
 	//create car body
 	b2BodyDef bodyDef;
 	bodyDef.type = b2_dynamicBody;
 	m_body = world->CreateBody(&bodyDef);
-	m_body->SetAngularDamping(3);
+	m_body->SetAngularDamping(angularDamping);
 
-	b2Vec2 vertices[8];
-	vertices[0].Set(1.5f, 0);
-	vertices[1].Set(3.0f, 2.5f);
-	vertices[2].Set(2.8f, 5.5f);
-	vertices[3].Set(1.0f, 10.0f);
-	vertices[4].Set(-1.0f, 10.0f);
-	vertices[5].Set(-2.8f, 5.5f);
-	vertices[6].Set(-3.0f, 2.5f);
-	vertices[7].Set(-1.0f, 0.0f);
 	b2PolygonShape polygonShape;
-	polygonShape.Set(vertices, 8);
-	b2Fixture* fixture = m_body->CreateFixture(&polygonShape, 0.1f);//shape, density
+	polygonShape.Set(vertices, bodyVertices.size());
+	b2Fixture* fixture = m_body->CreateFixture(&polygonShape, bodyDensity);
+	delete[] vertices;
 
-																	//prepare common joint parameters
-	b2RevoluteJointDef jointDef;
-	jointDef.bodyA = m_body;
-	jointDef.enableLimit = true;
-	jointDef.lowerAngle = 0;
-	jointDef.upperAngle = 0;
-	jointDef.localAnchorB.SetZero();//center of tire
+	const toml::Array& joints = carBodyParams->find("joints")->as<toml::Array>();
+	for (const toml::Value& v : joints)
+	{
+		b2RevoluteJointDef jointDef;
+		jointDef.bodyA = m_body;
+		jointDef.enableLimit = true;
+		jointDef.lowerAngle = 0;
+		jointDef.upperAngle = 0;
+		jointDef.localAnchorB.SetZero();
 
-	float maxForwardSpeed;
-	float maxBackwardSpeed;
-	float backTireMaxDriveForce;
-	float frontTireMaxDriveForce;
-	float backTireMaxLateralImpulse;
-	float frontTireMaxLateralImpulse;
-
-	FILE *carconfigFile = fopen("carsetup.ini","r");
-	char dummyvar[1024];
-	fscanf(carconfigFile, "%s %f", dummyvar,&maxForwardSpeed);
-	fscanf(carconfigFile, "%s %f", dummyvar, &maxBackwardSpeed);
-	fscanf(carconfigFile, "%s %f", dummyvar, &backTireMaxDriveForce);
-	fscanf(carconfigFile, "%s %f", dummyvar, &frontTireMaxDriveForce);
-	fscanf(carconfigFile, "%s %f", dummyvar, &backTireMaxLateralImpulse);
-	fscanf(carconfigFile, "%s %f", dummyvar, &frontTireMaxLateralImpulse);
-	fclose(carconfigFile);
+		const toml::Array& pos = v.find("local_anchorA")->as<toml::Array>();
+		jointDef.localAnchorA.Set(pos.at(0).asNumber(), pos.at(1).asNumber());
 	
+		TDTire* tire = new TDTire(world);
+		m_tires.push_back(tire);
 
-	//back left tire
-	TDTire* tire = new TDTire(world);
-	tire->setCharacteristics(maxForwardSpeed, maxBackwardSpeed, backTireMaxDriveForce, backTireMaxLateralImpulse);
-	jointDef.bodyB = tire->m_body;
-	jointDef.localAnchorA.Set(-3.0f, 0.75f);
-	world->CreateJoint(&jointDef);
-	m_tires.push_back(tire);
-
-	//back right tire
-	tire = new TDTire(world);
-	tire->setCharacteristics(maxForwardSpeed, maxBackwardSpeed, backTireMaxDriveForce, backTireMaxLateralImpulse);
-	jointDef.bodyB = tire->m_body;
-	jointDef.localAnchorA.Set(3.0f, 0.75f);
-	world->CreateJoint(&jointDef);
-	m_tires.push_back(tire);
-
-	//front left tire
-	tire = new TDTire(world);
-	tire->setCharacteristics(maxForwardSpeed, maxBackwardSpeed, frontTireMaxDriveForce, frontTireMaxLateralImpulse);
-	jointDef.bodyB = tire->m_body;
-	jointDef.localAnchorA.Set(-3.0f, 8.5f);
-	flJoint = (b2RevoluteJoint*)world->CreateJoint(&jointDef);
-	m_tires.push_back(tire);
-
-	//front right tire
-	tire = new TDTire(world);
-	tire->setCharacteristics(maxForwardSpeed, maxBackwardSpeed, frontTireMaxDriveForce, frontTireMaxLateralImpulse);
-	jointDef.bodyB = tire->m_body;
-	jointDef.localAnchorA.Set(3.0f, 8.5f);
-	frJoint = (b2RevoluteJoint*)world->CreateJoint(&jointDef);
-	m_tires.push_back(tire);
+		tire->setCharacteristics(maxForwardSpeed, maxBackwardSpeed, backTireMaxDriveForce, backTireMaxLateralImpulse);
+		jointDef.bodyB = tire->m_body;
+		b2RevoluteJoint * newJoint = (b2RevoluteJoint *)world->CreateJoint(&jointDef);
+		if (v.find("frontleft"))
+		{
+			flJoint = newJoint;
+		}
+		else
+		if (v.find("frontright"))
+		{
+			frJoint = newJoint;
+		}
+		
+	}
 
 }
 void TDCar::setTransform(b2Vec2 position, float angle)
@@ -240,20 +225,20 @@ void TDCar::update(int controlState)
 	for (unsigned int i = 0; i < m_tires.size(); i++)
 		m_tires[i]->updateDrive(controlState);
 	//control steering
-	float lockAngle = 35 * DEGTORAD;
-	float turnSpeedPerSec = 160 * DEGTORAD;//from lock to lock in 0.5 sec
+	float lockAngle = glm::radians(35.0f);
+	float turnSpeedPerSec = glm::radians(160.0f);//from lock to lock in 0.5 sec
 	float turnPerTimeStep = turnSpeedPerSec / 60.0f;
 	float desiredAngle = 0;
 	bool shouldTurn = false;
-	switch (controlState & (TDC_LEFT | TDC_RIGHT))
+	switch (controlState & (IA_LEFT | IA_RIGHT))
 	{
-	case TDC_LEFT:
+	case IA_LEFT:
 	{
 		desiredAngle = lockAngle;
 		shouldTurn = true;
 		break;
 	}
-	case TDC_RIGHT:
+	case IA_RIGHT:
 	{
 		shouldTurn = true;
 		desiredAngle = -lockAngle; break;
@@ -265,6 +250,7 @@ void TDCar::update(int controlState)
 		break;
 		//nothing
 	}
+
 	if (shouldTurn)
 	{ 
 
