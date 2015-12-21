@@ -16,6 +16,7 @@
     <RootNamespace>CarGame</RootNamespace>
     <TargetPlatformVersion>8.1</TargetPlatformVersion>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <ProjectName>Carvatar</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -113,7 +114,7 @@
     <ClCompile Include="BasicAiController.cpp" />
     <ClCompile Include="Box2DDebugDraw.cpp" />
     <ClCompile Include="Car.cpp" />
-    <ClCompile Include="CarGame.cpp" />
+    <ClCompile Include="Main.cpp" />
     <ClCompile Include="CarModel.cpp" />
     <ClCompile Include="Common.cpp" />
     <ClCompile Include="glesProgram.cpp" />

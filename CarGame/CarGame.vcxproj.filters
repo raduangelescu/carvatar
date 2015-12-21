@@ -44,7 +44,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CarGame.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="Car.cpp">
       <Filter>CarPhysics</Filter>
@@ -73,6 +72,7 @@
     <ClCompile Include="BasicAiController.cpp">
       <Filter>Controllers</Filter>
     </ClCompile>
+    <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="CarPhysics">
