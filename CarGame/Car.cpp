@@ -13,7 +13,7 @@ TopdownCar::TopdownCar()
 
 	g_physicsInfo.world->SetGravity(b2Vec2(0, 0));
 	m_car = new TDCar(g_physicsInfo.world);
-
+	m_currentRaceSectorIdx = 0;
 
 	//m_tire = new TDTire(m_world);
 	//m_tire->setCharacteristics(100, -20, 150);

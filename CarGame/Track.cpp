@@ -18,10 +18,15 @@ CTrack::CTrack()
 {
 
 }
+void CTrack::destroyGround()
+{
+	m_groundBody->SetActive(false);
+	g_physicsInfo.world->Step(0, 0, 0);
+	g_physicsInfo.world->DestroyBody(m_groundBody);
+}
 
 void CTrack::clear()
 {
-	//g_physicsInfo.world->DestroyBody(m_groundBody);
 	delete[] m_points;
 }
 

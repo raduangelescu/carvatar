@@ -4,13 +4,6 @@
 //
 
 #pragma once
-
-#include "targetver.h"
-
-#include <stdio.h>
-#include <tchar.h>
-
-
 #ifndef _PRECOMP_H
 #define _PRECOMP_H
 
@@ -20,7 +13,13 @@
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>
 #include <crtdbg.h>
+#define DEBUG_NEW new(_NORMAL_BLOCK, __FILE__, __LINE__)
+#define new DEBUG_NEW
 #endif
+
+#include "targetver.h"
+#include <stdio.h>
+#include <tchar.h>
 
 #include <GL/glew.h>
 #include <SDL.h>

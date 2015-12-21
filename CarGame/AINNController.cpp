@@ -46,7 +46,7 @@ void AINNController::keyUp(unsigned char c)
 AINNController::~AINNController()
 {
 
-	
+	fann_destroy(brain);
 }
 
 void AINNController::fixedStepUpdate()

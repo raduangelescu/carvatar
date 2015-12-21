@@ -177,7 +177,7 @@ int _tmain(int argc, _TCHAR* argv[])
 {
 	//Memory leak detection
 #ifdef _DEBUG
-	//_crtBreakAlloc = 287;
+	//_crtBreakAlloc = 490;
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
@@ -189,6 +189,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	TopdownCar * car = new TopdownCar();
 
 	Track_init();
+
 	car->setPosition(g_trackInfo->getTrackPoint(0).center);
 
 	//g_controller = new PlayerController();
@@ -237,7 +238,9 @@ int _tmain(int argc, _TCHAR* argv[])
 			SDL_Delay((unsigned int)(1000.0f / 30.0f) - (SDL_GetTicks() - start));
 	}
 
+
 	Render_end();
+	g_trackInfo->destroyGround();
 	delete car;
 
 	Track_end();

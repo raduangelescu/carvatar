@@ -57,6 +57,7 @@ public:
 	unsigned int	getFinishLineRaceSectorIdx() { return m_finishLineRaceSectorIdx; }
 	b2Body*			getGroundBody() { return m_groundBody; }
 	std::set<GroundAreaFUD*> & getGroundAreas() { return m_groundAreas; }
+	void destroyGround();
 	void clear();
 	
 };
