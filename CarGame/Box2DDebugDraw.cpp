@@ -50,11 +50,11 @@ void Box2DDebugDraw::construct()
 	    } \
 	    ";
 
-	GLfloat projection[16] = {2.0f / SCREEN_SIZE_WIDTH, 0                        , 0, 0,
-							  0                       , 2.0f / SCREEN_SIZE_HEIGHT, 0, 0,
+	GLfloat projection[16] = {3.0f / SCREEN_SIZE_WIDTH, 0                        , 0, 0,
+							  0                       , 3.0f / SCREEN_SIZE_HEIGHT, 0, 0,
 							  0                       , 0                        , 0, 0,
-							  -1                      , -1                       , 0, 1};
-
+							  -1.5                      , -1.5                       , 0, 1};
+	//glm::mat4X4 projection = glm::ortho
 	// create program
 	mProgram = new glesProgram();
 	mProgram->construct(vertexShader, fragmentShader);

@@ -29,10 +29,14 @@
 #include <assert.h>
 #include <set>
 #include <apiset.h>
+#include <glm/glm.hpp>
+#include <fstream>
+
+#define timegm _mkgmtime
 #define LOG_MAX_SIZE 1024
 
-#define SCREEN_SIZE_WIDTH (1024)
-#define SCREEN_SIZE_HEIGHT (768)
+#define SCREEN_SIZE_WIDTH (1980)
+#define SCREEN_SIZE_HEIGHT (1080)
 
 enum INPUT_SENSOR_TYPE
 {

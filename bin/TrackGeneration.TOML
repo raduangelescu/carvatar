@@ -1,0 +1,14 @@
+title = "Track generation settings file"
+
+[tracksettings]
+track_size = 360
+down_step = 30
+sector_step = 2
+track_width = 80
+radius_curvature = [-20, 30]
+radius_offset_curvature = 300
+hard_curvature_probability = [0,3,2]
+hard_curvature_value = 20
+smooth_iterations = 400
+physics_wall_size_inner = [5,5]
+physics_wall_size_outer = [5,5]

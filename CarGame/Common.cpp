@@ -16,13 +16,24 @@ FixtureUserData::~FixtureUserData()
 
 float randomInterval(int min, int max)
 {
-	return (float)(rand() % max + min);
+	if (min == max)
+		return min;
+	int offset = 0;
+	if (min < 0)
+	{
+		max = max - min;
+		offset = min;
+		min = 0;
+
+	}
+
+	return (float)(rand() % max + min) + offset;
 }
 
 b2Vec2 Lerp(b2Vec2 start, b2Vec2 end, float alpha)
 {
 	b2Vec2 dir = end - start;
-	dir.Normalize();
+	float length = dir.Normalize();
 
-	return start + alpha * (end - start).Length() * dir;
+	return start + alpha * length * dir;
 }
