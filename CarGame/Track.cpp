@@ -80,11 +80,12 @@ void CTrack::genCenterline(b2Vec2 *points)
 			lerpInterval(startIntervalIdx, endIntervalIdx, points, m_settings.track_size);
 		}
 	}
+	//Make the end point be the start point
+	points[m_settings.track_size - 1] = points[0];
 	//lerp last part if track_size is not a multiple of downstep
 	if (i >= m_settings.track_size)
 	{
-		points[m_settings.track_size - 1] = points[0];
-		lerpInterval(i - m_settings.down_step, m_settings.track_size-1, points, m_settings.track_size);
+		lerpInterval(i - m_settings.down_step, m_settings.track_size - 1, points, m_settings.track_size);
 	}
 
 	//apply a simple smooth filter (moving average 3, centered)

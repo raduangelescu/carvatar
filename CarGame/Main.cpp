@@ -138,7 +138,7 @@ void Render_init()
 	glEnable(GL_DEBUG_OUTPUT);
 
 
-	glClearColor(0.0f, 0.0f, 0.0f, 100.0f);
+	glClearColor(1.0f, 1.0f, 1.0f, 100.0f);
 	/* Clear the color and depth buffers. */
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glViewport(0, 0, SCREEN_SIZE_WIDTH, SCREEN_SIZE_HEIGHT);
