@@ -221,35 +221,31 @@ void CTrack::loadSettingsFromTOML(const char *filename)
 	toml::Parser parser(ifs);
 	toml::Value documentRoot   = parser.parse();
 	toml::Value* trackSettings = documentRoot.find("tracksettings");
-	unsigned int k = 0;
 	
-	m_settings.track_size	 = trackSettings->find("track_size")->as<int>();
-	m_settings.down_step	 = trackSettings->find("down_step")->as<int>();
-	m_settings.sector_step   = trackSettings->find("sector_step")->as<int>();
-	m_settings.track_width   = trackSettings->find("track_width")->as<int>();
+	m_settings.track_size				= trackSettings->find("track_size")->as<int>();
+	m_settings.down_step				= trackSettings->find("down_step")->as<int>();
+	m_settings.sector_step				= trackSettings->find("sector_step")->as<int>();
+	m_settings.track_width				= trackSettings->find("track_width")->as<int>();
+	m_settings.radius_offset_curvature  = trackSettings->find("radius_offset_curvature")->as<int>();
+	m_settings.hard_curvature_value     = trackSettings->find("hard_curvature_value")->as<int>();
+	m_settings.smooth_iterations        = trackSettings->find("smooth_iterations")->as<int>();
+
+	const toml::Array& radius_curvature				= trackSettings->find("radius_curvature")->as<toml::Array>();
+	const toml::Array& hard_curvature_probability   = trackSettings->find("hard_curvature_probability")->as<toml::Array>();
+	const toml::Array& physics_wall_size_inner		= trackSettings->find("physics_wall_size_inner")->as<toml::Array>();
+	const toml::Array& physics_wall_size_outer		= trackSettings->find("physics_wall_size_outer")->as<toml::Array>();
+
+	m_settings.radius_curvature[0] = radius_curvature.at(0).as<int>();
+	m_settings.radius_curvature[1] = radius_curvature.at(1).as<int>();
+
+	m_settings.hard_curvature_probability[0] = hard_curvature_probability.at(0).as<int>();
+	m_settings.hard_curvature_probability[1] = hard_curvature_probability.at(1).as<int>();
+	m_settings.hard_curvature_probability[2] = hard_curvature_probability.at(2).as<int>();
 	
-	const toml::Array& radius_curvature = trackSettings->find("radius_curvature")->as<toml::Array>();
-	k = 0;
-	for (const toml::Value& v : radius_curvature)
-		m_settings.radius_curvature[k++] = v.as<int>();
+	m_settings.physics_wall_size_inner[0] = physics_wall_size_inner.at(0).as<int>();
+	m_settings.physics_wall_size_inner[1] = physics_wall_size_inner.at(1).as<int>();		
 
-	m_settings.radius_offset_curvature = trackSettings->find("radius_offset_curvature")->as<int>();
-	const toml::Array& hard_curvature_probability = trackSettings->find("hard_curvature_probability")->as<toml::Array>();
-	k = 0;
-	for (const toml::Value& v : hard_curvature_probability)
-		m_settings.hard_curvature_probability[k++] = v.as<int>();
-
-	m_settings.hard_curvature_value = trackSettings->find("hard_curvature_value")->as<int>();
-	m_settings.smooth_iterations = trackSettings->find("smooth_iterations")->as<int>();
-
-	const toml::Array& physics_wall_size_inner = trackSettings->find("physics_wall_size_inner")->as<toml::Array>();
-	k = 0;
-	for (const toml::Value& v : physics_wall_size_inner)
-		m_settings.physics_wall_size_inner[k++] = v.as<int>();
-
-	const toml::Array& physics_wall_size_outer = trackSettings->find("physics_wall_size_outer")->as<toml::Array>();
-	k = 0;
-	for (const toml::Value& v : physics_wall_size_outer)
-		m_settings.physics_wall_size_outer[k++] = v.as<int>();
-
+	m_settings.physics_wall_size_outer[0] = physics_wall_size_outer.at(0).as<int>();
+	m_settings.physics_wall_size_outer[1] = physics_wall_size_outer.at(1).as<int>();
+	
 }
