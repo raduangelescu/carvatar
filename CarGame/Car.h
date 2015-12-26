@@ -12,7 +12,7 @@ struct CarSensorData
 	}
 };
 
-class TopdownCar : public b2ContactListener
+class TopdownCar 
 {
 
 	struct STopDownCarSettings
@@ -31,19 +31,15 @@ class TopdownCar : public b2ContactListener
 private:
 	float Raycast(b2Vec2 dir, float distance);
 public:
-	TopdownCar();
+	TopdownCar(unsigned int id);
 
 	~TopdownCar();
 
 	void keyboard(unsigned char key);
 	void keyboardUp(unsigned char key);
 	
-	void handleContact(b2Contact* contact, bool began);
-
-	void BeginContact(b2Contact* contact) { handleContact(contact, true); }
-	void EndContact(b2Contact* contact) { handleContact(contact, false); }
-
-	void tireVsGroundArea(b2Fixture* tireFixture, b2Fixture* groundAreaFixture, bool began);
+	
+	
 	void step();
 
 	b2Vec2 getPosition();
@@ -51,9 +47,8 @@ public:
 	CarSensorData & getSensorData() { return m_sensorData; }
 
 	b2Body* m_groundBody;
-	TDCar* m_car;
+	CarModel* m_car;
 	
 	int m_controlState;
 	unsigned int m_currentRaceSectorIdx;
-
 };

@@ -8,9 +8,9 @@ extern PhysicsData g_physicsInfo;
 extern CTrack*		g_trackInfo;
 extern Box2DDebugDraw* g_debugDraw;
 
-TopdownCar::TopdownCar()
+TopdownCar::TopdownCar(unsigned int id)
 {
-	m_car					= new TDCar(g_physicsInfo.world);
+	m_car					= new CarModel(g_physicsInfo.world,id);
 	m_currentRaceSectorIdx	= 0;
 	m_controlState			= 0;
 
@@ -66,39 +66,7 @@ void TopdownCar::keyboardUp(unsigned char key)
 	}
 }
 
-void TopdownCar::handleContact(b2Contact* contact, bool began)
-{
-	b2Fixture* a = contact->GetFixtureA();
-	b2Fixture* b = contact->GetFixtureB();
-	FixtureUserData* fudA = (FixtureUserData*)a->GetUserData();
-	FixtureUserData* fudB = (FixtureUserData*)b->GetUserData();
 
-	if (!fudA || !fudB)
-		return;
-
-
-	if (fudA->getType() == FUD_CAR_TIRE || fudB->getType() == FUD_RACE_SECTOR)
-		tireVsGroundArea(a, b, began);
-	else if (fudA->getType() == FUD_RACE_SECTOR || fudB->getType() == FUD_CAR_TIRE)
-		tireVsGroundArea(b, a, began);
-
-}
-
-void TopdownCar::tireVsGroundArea(b2Fixture* tireFixture, b2Fixture* groundAreaFixture, bool began)
-{
-	TDTire* tire = (TDTire*)tireFixture->GetBody()->GetUserData();
-	RaceSectorFUD* gaFud = (RaceSectorFUD*)groundAreaFixture->GetUserData();
-
-	if (gaFud->idx == m_currentRaceSectorIdx + 1)
-		m_currentRaceSectorIdx++;
-	//printf("RACE SECTOR: %d  you have %f race done \n", m_currentRaceSectorIdx, (float)m_currentRaceSectorIdx / (g_trackInfo->getFinishLineRaceSectorIdx()));
-	
-	if (m_currentRaceSectorIdx == (g_trackInfo->getFinishLineRaceSectorIdx() ))
-	{
-		printf("RACE LAP FINISHED \n");
-		m_currentRaceSectorIdx = 0;
-	}
-}
 
 b2Vec2 TopdownCar::getPosition()
 {
@@ -147,48 +115,44 @@ float TopdownCar::Raycast(b2Vec2 dir, float distance)
 	return closestFraction;
 }
 
-void RotateVector(b2Vec2 vec, float angle, b2Vec2 &output)
-{
-	float cs = cos(angle);
-	float sn = sin(angle);
 
-	output.x = vec.x * cs - vec.y * sn;
-	output.y = vec.x * sn + vec.y * cs;
-
-}
 
 void TopdownCar::step()
 {
 
 	m_car->update(m_controlState);
 	//normalized
-//	m_sensorData.data[IS_VELOCITY]= m_car->getBody()->GetLinearVelocity().Length()/60.0f;
+	m_sensorData.data[IS_VELOCITY]= m_car->getBody()->GetLinearVelocity().Length()/m_car->getMaxFrontSpeed();
 	
 	SGenTrackNode& sector =  g_trackInfo->getTrackPoint(m_currentRaceSectorIdx);
 
 	//normalized
 	static float maxDistance = g_trackInfo->getDistanceToFinishLine(0);
-//	m_sensorData.data[IS_LEFTDISTANCE] = g_trackInfo->getDistanceToFinishLine(m_currentRaceSectorIdx)/ maxDistance; //+ (sector.center - m_car->getBody()->GetPosition()).Length();
+ 	m_sensorData.data[IS_LEFTDISTANCE] = g_trackInfo->getDistanceToFinishLine(m_currentRaceSectorIdx)/ maxDistance; 
 	
 	b2Vec2 trackdirection = sector.direction;
 	b2Vec2 cardirection = m_car->getDirection();
 	//normalized?
-//	m_sensorData.data[IS_TRACKANGLE] = (cardirection.x * trackdirection.x + cardirection.y * trackdirection.y + 1.0f)/2.0f;
+	m_sensorData.data[IS_TRACKANGLE]			  = (cardirection.x * trackdirection.x + cardirection.y * trackdirection.y + 1.0f)/2.0f;
+
+	m_sensorData.data[IS_CARDISTANCETOCENTERLINE] = g_trackInfo->getSectorDistanceToCenterline(m_currentRaceSectorIdx + 1, m_car->getBody()->GetPosition());
 	b2RayCastInput input;
 	
-	float rayLength = 10000; //long enough to hit the walls
+	float rayLength = 100; //long enough to hit the walls
 	b2Vec2 front = m_car->getDirection();
 	b2Vec2 right, left,hright,hleft;
 	RotateVector(front, 90 * DEGTORAD, right);
 	RotateVector(front, -90 * DEGTORAD, left);
 	RotateVector(front, 45 * DEGTORAD, hright);
 	RotateVector(front, -45 * DEGTORAD, hleft);
-	float scaleRaycastData = 100;
-//	m_sensorData.data[IS_RAYCAST90] = Raycast(right, rayLength) * scaleRaycastData;
-	m_sensorData.data[IS_RAYCAST45] = Raycast(hright, rayLength) * scaleRaycastData * 10.0f;
-//	m_sensorData.data[IS_RAYCAST0] = Raycast(front, rayLength) * scaleRaycastData;
-	m_sensorData.data[IS_RAYCASTM45] = Raycast(hleft, rayLength) * scaleRaycastData * 10.0f;
-//	m_sensorData.data[IS_RAYCASTM90] = Raycast(left, rayLength) * scaleRaycastData;
+
+	m_sensorData.data[IS_RAYCAST90] = Raycast(right, rayLength);
+	m_sensorData.data[IS_RAYCAST45] = Raycast(hright, rayLength);
+	m_sensorData.data[IS_RAYCAST0] = Raycast(front, rayLength);
+	m_sensorData.data[IS_RAYCASTM45] = Raycast(hleft, rayLength);
+	m_sensorData.data[IS_RAYCASTM90] = Raycast(left, rayLength);
+
+	
 	Raycast(hleft, rayLength);
 
 	

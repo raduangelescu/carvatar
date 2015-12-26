@@ -36,8 +36,8 @@ class CTrack
 		int hard_curvature_probability[3];
 		int hard_curvature_value;
 		int	smooth_iterations;
-		int physics_wall_size_inner[2];
-		int physics_wall_size_outer[2];
+		float physics_wall_size_inner[2];
+		float physics_wall_size_outer[2];
 
 	}m_settings; // read from TOML file
 
@@ -64,6 +64,7 @@ public:
 	void			genTrack();
 
 	float			getDistanceToFinishLine(const unsigned int idx);
+	float			getSectorDistanceToCenterline(const unsigned int idx, b2Vec2 carPos);
 	float			getTotalTrackLength() { return m_trackLength; }
 	SGenTrackNode & getTrackPoint(const unsigned int idx);
 	unsigned int	getFinishLineRaceSectorIdx() { return m_finishLineRaceSectorIdx; }

@@ -111,8 +111,8 @@ void PlayerController::fixedStepUpdate()
 	memcpy(newdata.output, currentAction, sizeof(currentAction));
 	allTrainingData.push_back(newdata);
 
-	prinfvector(newdata.input, IS_NUM);
-	prinfvector(newdata.output, OA_NUM);
+	//prinfvector(newdata.input, IS_NUM);
+	//prinfvector(newdata.output, OA_NUM);
 
 
 	

@@ -26,6 +26,8 @@ public:
 
 	virtual void fixedStepUpdate() = 0;
 	virtual ~IController() {}
+
+	TopdownCar *getCar() { return m_car; }
 protected:
 	TopdownCar * m_car;
 

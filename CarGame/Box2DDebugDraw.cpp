@@ -1,9 +1,3 @@
-/*
- * Box2DDebugDraw.cpp
- *
- *  Created on: 16.11.2012
- *      Author: Tom
- */
 #include "stdafx.h"
 #include "Box2DDebugDraw.h"
 
@@ -50,10 +44,10 @@ void Box2DDebugDraw::construct()
 	    } \
 	    ";
 
-	GLfloat projection[16] = {3.0f / SCREEN_SIZE_WIDTH, 0                        , 0, 0,
-							  0                       , 3.0f / SCREEN_SIZE_HEIGHT, 0, 0,
+	GLfloat projection[16] = {30.0f / SCREEN_SIZE_WIDTH, 0                        , 0, 0,
+							  0                       , 30.0f / SCREEN_SIZE_HEIGHT, 0, 0,
 							  0                       , 0                        , 0, 0,
-							  -1.5                      , -1.5                       , 0, 1};
+							  -15                      , -15                       , 0, 1};
 	//glm::mat4X4 projection = glm::ortho
 	// create program
 	mProgram = new glesProgram();

@@ -19,3 +19,13 @@ void fprinfvector(FILE*f, float *v, unsigned int size)
 		fprintf(f, "%f ", v[i]);
 	fprintf(f, "\n");
 }
+
+void RotateVector(b2Vec2 vec, float angle, b2Vec2 &output)
+{
+	float cs = cos(angle);
+	float sn = sin(angle);
+
+	output.x = vec.x * cs - vec.y * sn;
+	output.y = vec.x * sn + vec.y * cs;
+
+}

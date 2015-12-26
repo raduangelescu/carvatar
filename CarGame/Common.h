@@ -17,7 +17,7 @@ enum INPUT_ACTIONS
 //types of fixture user data
 enum fixtureUserDataType 
 {
-	FUD_CAR_TIRE,
+	FUD_CAR,
 	FUD_RACE_SECTOR
 };
 

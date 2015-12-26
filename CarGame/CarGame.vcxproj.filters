@@ -42,6 +42,9 @@
     <ClInclude Include="BasicAIController.h">
       <Filter>Controllers</Filter>
     </ClInclude>
+    <ClInclude Include="RaceManager.h">
+      <Filter>Manager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
@@ -73,6 +76,9 @@
       <Filter>Controllers</Filter>
     </ClCompile>
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="RaceManager.cpp">
+      <Filter>Manager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="CarPhysics">
@@ -89,6 +95,9 @@
     </Filter>
     <Filter Include="Controllers">
       <UniqueIdentifier>{7b446097-d573-4bc7-8364-872c7c20eab7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Manager">
+      <UniqueIdentifier>{2f5621db-a053-44e5-a474-3faa3781b72b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

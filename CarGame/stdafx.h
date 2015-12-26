@@ -40,16 +40,15 @@
 
 enum INPUT_SENSOR_TYPE
 {
-	//IS_VELOCITY,
-	//IS_LEFTDISTANCE,
-	//IS_TRACKANGLE,
-	//IS_RAYCAST90,
+	IS_VELOCITY,
+	IS_LEFTDISTANCE,
+	IS_TRACKANGLE,
+	IS_RAYCAST90,
 	IS_RAYCAST45,
-	//IS_RAYCAST0,
+	IS_RAYCAST0,
 	IS_RAYCASTM45,
-	//IS_RAYCASTM90,
-	//IS_TRACKDISTANCE,
-	//IS_TRACKSIDE,
+	IS_RAYCASTM90,
+	IS_CARDISTANCETOCENTERLINE,
 
 	IS_NUM
 };
@@ -77,9 +76,16 @@ struct PhysicsData
 	b2World * world;
 };
 
+enum COLLISION_FILTERS
+{
+	CATEGORY_CAR = 0x0001,
+	CATEGORY_STATIC = 0x0002
+};
+
 void prinfvector(float *v, unsigned int size);
 void fprinfvector(FILE*f, float *v, unsigned int size);
 
+void RotateVector(b2Vec2 vec, float angle, b2Vec2 &output);
 inline void Log(const char* fmt, ...)
 {
 	char buf[LOG_MAX_SIZE];

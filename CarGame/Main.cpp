@@ -7,17 +7,18 @@
 #include "Box2DDebugDraw.h"
 #include "Track.h"
 #include "Car.h"
-#include "PlayerController.h"
-#include "AINNController.h"
-#include "BasicAIController.h"
+#include "RaceManager.h"
 
 #include <Windows.h>
+
+
+
 
 RenderData		g_renderInfo;
 PhysicsData		g_physicsInfo;
 CTrack*			g_trackInfo;
 Box2DDebugDraw* g_debugDraw;
-IController *   g_controller;
+RaceManager*    g_raceManager;
 
 class TopdownCarDestructionListener : public b2DestructionListener
 {
@@ -34,6 +35,7 @@ class TopdownCarDestructionListener : public b2DestructionListener
 	}
 
 }g_destructionListener;
+
 
 void Track_init()
 {
@@ -58,7 +60,7 @@ void Physics_init()
 	g_debugDraw->construct();
 	g_physicsInfo.world->SetDebugDraw(g_debugDraw);
 	g_physicsInfo.world->SetDestructionListener(&g_destructionListener);
-	g_debugDraw->SetFlags(b2Draw::e_shapeBit /* + b2Draw::e_jointBit + b2Draw::e_aabbBit +
+	g_debugDraw->SetFlags(b2Draw::e_shapeBit  + b2Draw::e_jointBit /*+ b2Draw::e_aabbBit +
 													5:                 b2Draw::e_pairBit + b2Draw::e_centerOfMassBit*/);
 
 }
@@ -66,14 +68,12 @@ void Physics_init()
 void Physics_step()
 {
 	g_physicsInfo.world->Step(1.0f / 30.0f , 8 , 3);
-	
-	g_controller->fixedStepUpdate();
-	
+
 }
 
 void Physics_end()
 {
-	delete g_controller;
+
 	delete g_physicsInfo.world;
 }
 
@@ -186,23 +186,22 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	Physics_init();
 
-	TopdownCar * car = new TopdownCar();
+
 
 	Track_init();
 
-	car->setPosition(g_trackInfo->getTrackPoint(0).center);
-
-	//g_controller = new PlayerController();
-	g_controller = new AINNController();
+	g_physicsInfo.world->SetContactListener(g_raceManager);
+	
+	//g_controller = new AINNController();
 	//g_controller = new BasicAIController();
 
-	g_controller->initController(car);
+	
 
 
 	SDL_Event event;
 
 	bool IsRunning = true;
-	g_physicsInfo.world->SetContactListener(car);
+	
 	while (IsRunning)
 	{
 		unsigned int start = SDL_GetTicks();
@@ -221,18 +220,22 @@ int _tmain(int argc, _TCHAR* argv[])
 				
 				case SDL_KEYDOWN:
 				{
-					g_controller->keyDown(event.key.keysym.sym);
+					g_controllers[0]->keyDown(event.key.keysym.sym);
 					break;
 				}
 				case SDL_KEYUP:
 				{
-					g_controller->keyUp(event.key.keysym.sym);
+					g_controllers[0]->keyUp(event.key.keysym.sym);
 					break;
 				}
 			}
 		}
 		Render_drawFrame();
-		car->step();
+		for (unsigned int i = 0; i < NUM_RACERS + 1; i++)
+		{
+			g_controllers[i]->getCar()->step();
+		}
+		
 		Physics_step();
 		if (1000.0 / 30 > SDL_GetTicks() - start)
 			SDL_Delay((unsigned int)(1000.0f / 30.0f) - (SDL_GetTicks() - start));

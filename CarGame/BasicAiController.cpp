@@ -11,7 +11,7 @@
 
 BasicAIController::BasicAIController()
 {
-	allTrainingData.reserve(MAX_NUMBER_OF_TRAINING_DATA);
+	//allTrainingData.reserve(MAX_NUMBER_OF_TRAINING_DATA);
 	m_startRecord = false;
 
 }
@@ -82,7 +82,7 @@ void BasicAIController::keyUp(unsigned char c)
 
 void BasicAIController::trainNN()
 {
-	FILE * dataFile = fopen("traindata.txt", "w");
+	/*FILE * dataFile = fopen("traindata.txt", "w");
 	fprintf(dataFile, "%d %d %d \n", allTrainingData.size(), IS_NUM, OA_NUM);
 
 	
@@ -92,7 +92,7 @@ void BasicAIController::trainNN()
 		fprinfvector(dataFile, allTrainingData[i].output, OA_NUM);
 	
 	}
-	fclose(dataFile);
+	fclose(dataFile);*/
 }
 
 BasicAIController::~BasicAIController()
@@ -100,52 +100,46 @@ BasicAIController::~BasicAIController()
 
 	trainNN();
 }
-/*
-enum INPUT_SENSOR_TYPE
-{
-	IS_VELOCITY,
-	IS_LEFTDISTANCE,
-	IS_TRACKANGLE,
-	IS_RAYCAST90,
-	IS_RAYCAST45,
-	IS_RAYCAST0,
-	IS_RAYCASTM45,
-	IS_RAYCASTM90,
 
-	IS_NUM
-};
-*/
 void BasicAIController::fixedStepUpdate()
 {
-	if (m_startRecord == false)
-		return;
-	float *sensorData = m_car->getSensorData().data;
-	if (sensorData[IS_RAYCAST45] < 5)
-	{
-		keyDown('d');
-	}
-	else
-	{
-		keyUp('d');
-	}
+//	if (m_startRecord == false)
+//		return;
+	keyUp('a');keyUp('s');keyUp('d');keyUp('w');
 
-	if (sensorData[IS_RAYCASTM45] < 5)
+	float *sensorData = m_car->getSensorData().data;
+	if (sensorData[IS_CARDISTANCETOCENTERLINE] >= 0.2 )
 	{
 		keyDown('a');
 	}
 	else
+	if (sensorData[IS_CARDISTANCETOCENTERLINE] <= -0.2)
 	{
-		keyUp('a');
+		keyDown('d');
 	}
-	keyDown('w');
+
+
+	if (sensorData[IS_RAYCAST0] < 0.05 )
+	{
+		//keyDown('s');
+	}
+	else
+	{
+		if(sensorData[IS_VELOCITY] < 0.01)
+			keyDown('w');
+	}
+
+	
+	
+	
 
 	trainData newdata;
 	memcpy(newdata.input, m_car->getSensorData().data, sizeof(newdata.input));
 	memcpy(newdata.output, currentAction, sizeof(currentAction));
 	allTrainingData.push_back(newdata);
 
-	prinfvector(newdata.input, IS_NUM);
-	prinfvector(newdata.output, OA_NUM);
+	//prinfvector(newdata.input, IS_NUM);
+	//prinfvector(newdata.output, OA_NUM);
 
 
 	

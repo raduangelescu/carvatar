@@ -1,26 +1,37 @@
 title = "Car Setup"
 
 [carparams]
-max_forward_speed  = 61.0
-max_backward_speed = -40.0
-back_tire_max_drive_force = 100.0
-front_tire_max_drive_force = 150.0
-back_tire_max_lateral_impulse = 8.5
-front_tire_max_lateral_impulse = 7.5
-angular_damping = 3.0
+max_forward_speed  = 100.0
+max_backward_speed = -10.0
+max_lateral_impulse = 10.5
+steer_torque = 0.03
+max_drive_force = 10.0
+angular_damping = 0.3
 body_density  = 0.1
+traction = 0.1
 
 [carbody]
-body_vertices = [[1.5, 0.0],
-                [3.0, 2.5],
-                [2.8, 5.5],
-                [1.0, 10.0],
-                [-1.0, 10.0],
-                [-2.8, 5.5],
-                [-3.0, 2.5],
-                [-1.0, 0.0]]
+body_vertices = [[0.15, 0.0],
+                [0.3, 0.25],
+                [0.28, 0.55],
+                [0.10, 1.0],
+                [-0.1, 1.0],
+                [-0.28, 0.55],
+                [-0.30, 0.25],
+                [-0.1, 0.0]]
 
-joints = [ { local_anchorA = [-3.0,0.75], backleft=true},
-           { local_anchorA = [ 3.0,0.75], backright=true},
-           { local_anchorA = [-3.0, 8.5], frontleft=true},
-           { local_anchorA = [ 3.0, 8.5], frontright=true}]
+joints = [
+
+          { local_anchorA = [-0.3, 0.0],local_anchorB=[0.0, 0.0], frontleft=true},
+           { local_anchorA = [ 0.3, 0.0],local_anchorB=[0.0, 0.0], frontright=true}]
+
+[sensors]
+sensors =[{type="RAYCAST", angle=90.0 ,  enabled=0, weight=1.0 },
+          {type="RAYCAST", angle=45.0 ,  enabled=1, weight=1.0 },
+          {type="RAYCAST", angle=-45.0 , enabled=1, weight=1.0 },
+          {type="RAYCAST", angle=-90.0 , enabled=0, weight=1.0 },
+          {type="RAYCAST", angle=0.0 ,   enabled=0, weight=1.0 },
+          {type="VELOCITY" ,             enabled=0, weight=1.0 },
+          {type="LEFTDISTANCE" ,         enabled=0, weight=1.0 },
+          {type="TRACKANGLE" ,           enabled=0, weight=1.0 },
+          {type="DISTANCETOCENTERLINE" , enabled=0, weight=1.0 }]

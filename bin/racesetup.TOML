@@ -1,0 +1,9 @@
+[RaceSettings]
+racers=[
+  {name="auto1", type="player"},
+  {name="auto2", type="basic_ai"},
+]
+
+draw_raycast= true
+draw_intputs= true
+draw_outputs=true

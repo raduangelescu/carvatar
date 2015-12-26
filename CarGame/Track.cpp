@@ -1,8 +1,10 @@
 #include "stdafx.h"
 #include "Track.h"
 #include <tinytoml.h>
+#include "Box2DDebugDraw.h"
 
 extern PhysicsData g_physicsInfo;
+extern Box2DDebugDraw* g_debugDraw;
 
 RaceSectorFUD::RaceSectorFUD(int _idx) : FixtureUserData(FUD_RACE_SECTOR), idx(_idx){}
 
@@ -31,6 +33,36 @@ SGenTrackNode & CTrack::getTrackPoint(const unsigned int idx)
 	return m_points[idx * m_sectorStep];
 }
 
+float CTrack::getSectorDistanceToCenterline(const unsigned int idx, b2Vec2 carPos)
+{
+	unsigned int numSectors = m_allPointsSize / m_sectorStep;
+	unsigned currentidx = (idx % numSectors)* m_sectorStep;
+	unsigned nextIdx    = ((idx + 1) % numSectors) * m_sectorStep;
+	// go into track sector position system;
+	b2Vec2 carPosInTrackSector = carPos - m_points[nextIdx].center;
+	//carPosInTrackSector.Normalize();
+	b2Vec2 diff = m_points[nextIdx].center - m_points[currentidx].center;
+	b2Vec2 ortho;
+
+	ortho.Set(-diff.y, diff.x);
+	ortho.Normalize();
+
+	float dot = ortho.x * carPosInTrackSector.x + ortho.y * carPosInTrackSector.y;
+	float proj = dot/ m_settings.track_width;
+	
+
+	DebugLine l;
+	l.p1 = m_points[nextIdx].center;
+	l.p2 = l.p1 + proj * m_settings.track_width * ortho ;
+
+	g_debugDraw->debug_lines.push_back(l);
+
+
+	printf("%f value\n", proj);
+
+	return proj;
+}
+
 float CTrack::getDistanceToFinishLine(const unsigned int idx)
 {
 	unsigned int numSectors = m_allPointsSize / m_sectorStep;
@@ -41,10 +73,11 @@ float CTrack::getDistanceToFinishLine(const unsigned int idx)
 		distance += dir.Length();
 	}
 
+
 	return distance;
 }
 
-void	CTrack::lerpInterval(int startIdx, int endIdx, b2Vec2* points, int size)
+void CTrack::lerpInterval(int startIdx, int endIdx, b2Vec2* points, int size)
 {
 	const int lenInterval = endIdx - startIdx;
 	for (int j = startIdx; j < endIdx && j < size; j++)
@@ -108,52 +141,61 @@ void CTrack::genPhysicsTrackRepresentation()
 {
 	b2BodyDef bodyDef;
 	m_groundBody = g_physicsInfo.world->CreateBody(&bodyDef);
+	b2Filter filter;
+	filter.categoryBits = CATEGORY_STATIC;
+	filter.maskBits = (uint16)(-1);
+
 	// generate circuit phisic walls
-	for (unsigned int i = 0; i < m_allPointsSize; i++)
+	for (unsigned int i = 0; i < m_allPointsSize-2; i++)
 	{
+		unsigned int nextIdx = (i + 1);
+		if (nextIdx >= m_allPointsSize - 2)
+			nextIdx = 0;
 
-		b2PolygonShape wallShapeInner;
-		wallShapeInner.SetAsBox(m_settings.physics_wall_size_inner[0], m_settings.physics_wall_size_inner[1],
-								m_points[i].inner, atan2(m_points[i].direction.y, m_points[i].direction.x));
-
+		b2EdgeShape wallShapeInner;
+		wallShapeInner.Set(m_points[i].inner, m_points[nextIdx].inner);
+	
 		b2FixtureDef wallfixtureDefInner;
 		wallfixtureDefInner.shape = &wallShapeInner;
 
 		b2Fixture* wallFixtureInner = m_groundBody->CreateFixture(&wallfixtureDefInner);
+		wallFixtureInner->SetFilterData(filter);
+	
+		
+		b2EdgeShape wallShapeOuter;
+		wallShapeOuter.Set(m_points[i].outer, m_points[nextIdx].outer);
 
-		b2PolygonShape wallShapeOuter;
-		wallShapeOuter.SetAsBox(m_settings.physics_wall_size_outer[0], m_settings.physics_wall_size_outer[1], 
-								m_points[i].outer, atan2(m_points[i].direction.y, m_points[i].direction.x));
-
+		
 		b2FixtureDef wallfixtureDefOuter;
 		wallfixtureDefOuter.shape = &wallShapeOuter;
 		b2Fixture* wallFixtureOuter = m_groundBody->CreateFixture(&wallfixtureDefOuter);
-
+		wallFixtureOuter->SetFilterData(filter);
 	}
 
 	unsigned int numSectors = m_allPointsSize / m_sectorStep;
 
 	for (unsigned int sector = 0; sector < numSectors; sector++)
 	{
-		unsigned int i = sector * m_sectorStep;
+		unsigned int currentIdx = sector * m_sectorStep;
+		unsigned int nextIdx    = ((sector+1) % numSectors) * m_sectorStep;
 
 		b2PolygonShape groundSectorShape;
 		//Generate ground sector shape
-		b2Vec2 diffvec = m_points[i].inner - m_points[i].outer;
-		float len = diffvec.Normalize();
-		float x = diffvec.x;
-		diffvec.x = -diffvec.y;
-		diffvec.y = x;
-
 		b2FixtureDef groundSectorFixtureDef;
-
-		groundSectorShape.SetAsBox(10.0f, len / 2.0f, m_points[i].center, atan2(diffvec.y, diffvec.x));
+		b2Vec2 quad[4];
+		quad[0] = m_points[currentIdx].inner;
+		quad[1] = m_points[currentIdx].outer;
+		quad[2] = m_points[nextIdx].outer;
+		quad[3] = m_points[nextIdx].inner;
+		groundSectorShape.Set(quad,4);
 		groundSectorFixtureDef.isSensor = true;
 		groundSectorFixtureDef.shape = &groundSectorShape;
 
 		b2Fixture* groundSectorFixture = m_groundBody->CreateFixture(&groundSectorFixtureDef);
 		RaceSectorFUD *userData = new RaceSectorFUD(m_finishLineRaceSectorIdx);
 		groundSectorFixture->SetUserData(userData);
+		groundSectorFixture->SetFilterData(filter);
+
 		m_finishLineRaceSectorIdx++;
 
 	}
@@ -242,10 +284,10 @@ void CTrack::loadSettingsFromTOML(const char *filename)
 	m_settings.hard_curvature_probability[1] = hard_curvature_probability.at(1).as<int>();
 	m_settings.hard_curvature_probability[2] = hard_curvature_probability.at(2).as<int>();
 	
-	m_settings.physics_wall_size_inner[0] = physics_wall_size_inner.at(0).as<int>();
-	m_settings.physics_wall_size_inner[1] = physics_wall_size_inner.at(1).as<int>();		
+	m_settings.physics_wall_size_inner[0] = physics_wall_size_inner.at(0).as<double>();
+	m_settings.physics_wall_size_inner[1] = physics_wall_size_inner.at(1).as<double>();		
 
-	m_settings.physics_wall_size_outer[0] = physics_wall_size_outer.at(0).as<int>();
-	m_settings.physics_wall_size_outer[1] = physics_wall_size_outer.at(1).as<int>();
+	m_settings.physics_wall_size_outer[0] = physics_wall_size_outer.at(0).as<double>();
+	m_settings.physics_wall_size_outer[1] = physics_wall_size_outer.at(1).as<double>();
 	
 }
