@@ -110,6 +110,8 @@ void RaceManager::carVsGroundArea(b2Fixture* carFixture, b2Fixture* groundAreaFi
 	{	
 		car = m_controllers[i]->getCar();
 		car = (car->getCarModel()->getId() != cFUD->getId()) ? NULL : car;
+		if (car != NULL)
+			break;
 	}
 
 	if (car != NULL)

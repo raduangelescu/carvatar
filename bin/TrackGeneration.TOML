@@ -3,7 +3,7 @@ title = "Track generation settings file"
 [tracksettings]
 track_size = 360
 down_step = 30
-sector_step = 2
+sector_step = 5
 track_width = 10
 radius_curvature = [-10, 20]
 radius_offset_curvature = 20

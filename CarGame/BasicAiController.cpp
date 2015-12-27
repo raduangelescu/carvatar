@@ -65,13 +65,13 @@ void BasicAIController::fixedStepUpdate()
 	
 	float *sensorData = m_car->getSensorData()->data;
 
-	if (sensorData[IS_CARDISTANCETOCENTERLINE] >= 0.2 )
-		m_currentAction[OA_LEFT] = 1.0f;
-	else
-	if (sensorData[IS_CARDISTANCETOCENTERLINE] <= -0.2)
+	if (sensorData[IS_CARDISTANCETOCENTERLINE] >= 0.02 )
 		m_currentAction[OA_RIGHT] = 1.0f;
+	else
+	if (sensorData[IS_CARDISTANCETOCENTERLINE] <= -0.02)
+		m_currentAction[OA_LEFT] = 1.0f;
 	
-	if(sensorData[IS_RAYCAST0] >= 0.05 && sensorData[IS_VELOCITY] < 0.01)
+	if(sensorData[IS_RAYCAST0] >= 0.05 && sensorData[IS_VELOCITY] < 0.4)
 		m_currentAction[OA_UP] = 1.0f; 
 
 	m_car->setAction(m_currentAction);

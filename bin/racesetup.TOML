@@ -2,6 +2,7 @@
 racers=[
   {name="auto1", type="player"},
   {name="auto2", type="basic_ai"},
+  {name="auto3", type="basic_ai"},
 ]
 
 draw_raycast= true

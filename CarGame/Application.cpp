@@ -44,6 +44,7 @@ void Application::initPhyisics()
 	// set debug draw flags from available : 
 	// b2Draw::e_shapeBit, b2Draw::e_jointBit. b2Draw::e_aabbBit, b2Draw::e_pairBit, b2Draw::e_centerOfMassBit
 	m_renderInfo.ddraw->SetFlags(b2Draw::e_shapeBit + b2Draw::e_jointBit);
+	
 }
 
 void Application::initRender()
