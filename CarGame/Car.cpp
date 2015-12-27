@@ -71,12 +71,12 @@ float Raycast(b2Vec2 startPosition, b2Vec2 dir, float distance)
 		}
 	}
 	// Add raycast to debug renderer
-	DebugLine l;
+	/*DebugLine l;
 	l.p1 = p1;
 	l.p2 = p1 + distance * closestFraction * dir;
 
 	RENDER->ddraw->debug_lines.push_back(l);
-	
+	*/
 	return closestFraction;
 }
 

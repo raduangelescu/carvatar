@@ -262,7 +262,6 @@ void CTrack::genTrack()
 	
 	genCenterline(centerlinePoints);
 	genLogicalTrackRepresentation(centerlinePoints);
-	genPhysicsTrackRepresentation();
 	
 	genRacingLineApproximation();
 

@@ -49,7 +49,6 @@ private:
 	void			lerpInterval(int startIdx, int endIdx, b2Vec2* points, int size);
 	void			genCenterline(b2Vec2 *points);
 	void			genLogicalTrackRepresentation(b2Vec2 *points);
-	void			genPhysicsTrackRepresentation();
 
 	void			genRacingLineApproximation();
 
@@ -58,6 +57,7 @@ public:
 	~CTrack();
 	void			loadSettingsFromTOML(const char *filename);
 	void			genTrack();
+	void			genPhysicsTrackRepresentation();
 
 	float			getDistanceToFinishLine(const unsigned int idx);
 	float			getSectorDistanceToCenterline(const unsigned int idx, b2Vec2 carPos);

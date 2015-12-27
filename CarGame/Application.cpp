@@ -43,7 +43,7 @@ void Application::initPhyisics()
 	m_physicsInfo.world->SetDebugDraw(m_renderInfo.ddraw);
 	// set debug draw flags from available : 
 	// b2Draw::e_shapeBit, b2Draw::e_jointBit. b2Draw::e_aabbBit, b2Draw::e_pairBit, b2Draw::e_centerOfMassBit
-	m_renderInfo.ddraw->SetFlags(b2Draw::e_shapeBit + b2Draw::e_jointBit);
+	m_renderInfo.ddraw->SetFlags(b2Draw::e_shapeBit);
 	
 }
 
@@ -87,8 +87,11 @@ void Application::init()
 
 	m_randomRoot = (unsigned int)time(NULL);
 	srand(m_randomRoot);
+	
 	m_trackInfo->genTrack();
 	m_raceManager->loadRaceFromTOML("racesetup.TOML");
+	m_trackInfo->genPhysicsTrackRepresentation();
+
 	m_physicsInfo.world->SetContactListener(m_raceManager);
 }
 
