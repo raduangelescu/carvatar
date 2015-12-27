@@ -25,7 +25,14 @@ class CarModel
 	float m_maxLateralImpulse;
 	float m_currentTraction;
 	float m_angularDamping;
+	float m_angularFriction;
 	float m_bodyDensity;
+	float m_steerTorque;
+	float m_steerTorqueOffset;
+	float m_driftFriction;
+	float m_dragModifier;
+	float m_steerAllowSpeed;
+
 
 	unsigned int m_id;
 

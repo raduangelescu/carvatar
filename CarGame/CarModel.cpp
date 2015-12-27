@@ -40,15 +40,21 @@ CarModel::CarModel(b2World* world,unsigned int id)
 	toml::Value documentRoot = parser.parse();
 	toml::Value* params = documentRoot.find("carparams");
 
-	m_maxForwardSpeed = (float)params->find("max_forward_speed")->as<double>();
-	m_maxBackwardSpeed = (float)params->find("max_backward_speed")->as<double>();
-	m_maxDriveForce = (float)params->find("max_drive_force")->as<double>();
+	m_maxForwardSpeed	= (float)params->find("max_forward_speed")->as<double>();
+	m_maxBackwardSpeed	= (float)params->find("max_backward_speed")->as<double>();
+	m_maxDriveForce		= (float)params->find("max_drive_force")->as<double>();
 	m_maxLateralImpulse = (float)params->find("max_lateral_impulse")->as<double>();
-	m_angularDamping = (float)params->find("angular_damping")->as<double>();
-	m_bodyDensity = (float)params->find("body_density")->as<double>();
-	m_currentTraction = (float)params->find("traction")->as<double>();
+	m_angularDamping	= (float)params->find("angular_damping")->as<double>();
+	m_angularFriction	= (float)params->find("angular_friction")->as<double>();
+	m_bodyDensity		= (float)params->find("body_density")->as<double>();
+	m_currentTraction	= (float)params->find("traction")->as<double>();
+	m_steerTorque		= (float)params->find("steer_torque")->as<double>();
+	m_steerTorqueOffset = (float)params->find("steer_torque_offset")->as<double>();
+	m_driftFriction		= (float)params->find("drift_friction")->as<double>();
+	m_dragModifier		= (float)params->find("drag_modifier")->as<double>();
+	m_steerAllowSpeed	= (float)params->find("steer_allow_speed")->as<double>();
 
-	
+
 	toml::Value* carBodyParams = documentRoot.find("carbody");
 
 	const toml::Array& bodyVertices = carBodyParams->find("body_vertices")->as<toml::Array>();
@@ -97,16 +103,17 @@ void CarModel::updateFriction()
 	if (impulse.Length() > m_maxLateralImpulse)
 		impulse *= m_maxLateralImpulse / impulse.Length();
 
-	m_body->ApplyLinearImpulse(0.05 * impulse, m_body->GetWorldCenter(), true);
+	m_body->ApplyLinearImpulse(m_driftFriction * impulse, m_body->GetWorldCenter(), true);
 
 	//angular velocity
-	m_body->ApplyAngularImpulse(m_currentTraction *0.23 * m_body->GetInertia() * -m_body->GetAngularVelocity(), true);
+	m_body->ApplyAngularImpulse(m_angularFriction * m_body->GetInertia() * -m_body->GetAngularVelocity(), true);
 
 	//forward linear velocity
 	b2Vec2 currentForwardNormal = getForwardVelocity();
 	float currentForwardSpeed = currentForwardNormal.Normalize();
-	float dragForceMagnitude = -2 * currentForwardSpeed;
-	m_body->ApplyForce(m_currentTraction* 0.23 * dragForceMagnitude * currentForwardNormal, m_body->GetWorldCenter(), true);
+	float dragForceMagnitude = -2 * currentForwardSpeed * m_dragModifier;
+
+	m_body->ApplyForce(m_currentTraction * dragForceMagnitude * currentForwardNormal, m_body->GetWorldCenter(), true);
 }
 void CarModel::updateDrive(float* controlState)
 {
@@ -140,14 +147,18 @@ void CarModel::updateTurn(float* controlState)
 {
 	b2Vec2 currentForwardNormal = m_body->GetWorldVector(b2Vec2(0, 1));
 	float currentSpeed = b2Dot(getForwardVelocity(), currentForwardNormal);
-	if (fabs(currentSpeed) < 0.1f)
-		return;
-	float desiredTorque = 0;
+	float turnRate = currentSpeed / m_maxForwardSpeed;
+	if (controlState[OA_DOWN] > 0.0f)
+		turnRate = currentSpeed / m_maxBackwardSpeed;
 
+	float desiredTorque = 0;
+	float torque = m_steerTorque * turnRate + m_steerTorqueOffset;
 	if (controlState[OA_LEFT] > 0.0f)
-		desiredTorque = 15 * 0.001f;
+		desiredTorque = torque;
 	if (controlState[OA_RIGHT] > 0.0f)
-		desiredTorque = -15 * 0.001f;
+		desiredTorque = -torque;
+	if (controlState[OA_DOWN] > 0.0f)
+		desiredTorque = -desiredTorque;
 
 	m_body->ApplyTorque(desiredTorque, true);
 }
