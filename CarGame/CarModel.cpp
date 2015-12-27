@@ -152,7 +152,7 @@ void CarModel::updateTurn(float* controlState)
 		turnRate = currentSpeed / m_maxBackwardSpeed;
 
 	float desiredTorque = 0;
-	float torque = m_steerTorque * turnRate + m_steerTorqueOffset;
+	float torque = m_steerTorque  + m_steerTorqueOffset;
 	if (controlState[OA_LEFT] > 0.0f)
 		desiredTorque = torque;
 	if (controlState[OA_RIGHT] > 0.0f)

@@ -50,13 +50,6 @@ float CTrack::getSectorDistanceToCenterline(const unsigned int idx, b2Vec2 carPo
 	float proj = dot/m_trackWidth;
 	
 
-	DebugLine l;
-	l.p1 = m_points[nextIdx].center;
-	l.p2 = l.p1 + proj * m_trackWidth * ortho ;
-
-	RENDER->ddraw->debug_lines.push_back(l);
-
-
 	return proj;
 }
 
@@ -236,6 +229,26 @@ void CTrack::genLogicalTrackRepresentation(b2Vec2 *points)
 	m_points[endidx].width  = m_trackWidth;
 }
 
+void CTrack::genRacingLineApproximation()
+{
+	//apply a simple smooth filter (moving average 3, centered)
+	for (int k = 0; k < m_trackSize; k++)
+		m_points[k].racingPoint = m_points[k].center;
+	
+	for (int i = 0; i < m_smoothIterations; i++)
+	{
+
+		for (int k = 0; k < m_trackSize; k++)
+		{
+			// wrap around index
+			int prev_idx = ((k - 1) < 0) ? (m_trackSize - 1) : (k - 1);
+			int next_idx = ((k + 1) >= m_trackSize) ? 0 : (k + 1);
+			// moving average
+			m_points[k].racingPoint = 1 / 3.f *(m_points[prev_idx].racingPoint + m_points[k].racingPoint + m_points[next_idx].racingPoint);
+		}
+	}
+}
+
 void CTrack::genTrack()
 {
 	loadSettingsFromTOML("TrackGeneration.TOML");
@@ -250,6 +263,8 @@ void CTrack::genTrack()
 	genCenterline(centerlinePoints);
 	genLogicalTrackRepresentation(centerlinePoints);
 	genPhysicsTrackRepresentation();
+	
+	genRacingLineApproximation();
 
 	delete[] centerlinePoints;
 }

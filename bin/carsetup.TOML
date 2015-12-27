@@ -3,11 +3,11 @@ title = "Car Setup"
 [carparams]
 max_forward_speed  = 20.0
 max_backward_speed = -10.0
-max_lateral_impulse = 10.5
+max_lateral_impulse = 5.5
 steer_torque = 0.01
 steer_torque_offset = 0.004
 max_drive_force = 5.0
-angular_damping = 0.3
+angular_damping = 0.1
 angular_friction = 0.023
 body_density  = 0.1
 traction = 0.1

@@ -17,6 +17,7 @@ struct SGenTrackNode
 	b2Vec2	inner;
 	b2Vec2	outer;
 	b2Vec2  center;
+	b2Vec2  racingPoint;
 	b2Vec2	direction;
 	float	width;
 };
@@ -49,6 +50,8 @@ private:
 	void			genCenterline(b2Vec2 *points);
 	void			genLogicalTrackRepresentation(b2Vec2 *points);
 	void			genPhysicsTrackRepresentation();
+
+	void			genRacingLineApproximation();
 
 public:
 	CTrack();
