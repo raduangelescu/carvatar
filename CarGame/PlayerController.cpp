@@ -28,57 +28,16 @@ void PlayerController::initController(TopdownCar * car)
 		<< " [ A ] - turn left" << std::endl
 		<< " [ D ] - turn right" << std::endl
 		<< std::endl;
-
-	for (unsigned int i = 0; i < OA_NUM; i++)
-		currentAction[i] = -1.0f;
 }
 
-void PlayerController::keyDown(unsigned char c)
+void PlayerController::keyEvent(unsigned char c, bool keypress)
 {
-	m_car->keyboard(c);
+	IController::keyEvent(c, keypress);
 
-	switch (c)
-	{
-	case 'a':
-		currentAction[OA_LEFT] = 1.0f;
-		break;
-	case 'd':
-		currentAction[OA_RIGHT] = 1.0f;
-		break;
-	case 'w':
-		currentAction[OA_UP] = 1.0f;
-		break;
-	case 's':
-		currentAction[OA_DOWN] = 1.0f;
-		break;
-
-	}
-	m_startRecord = true;
-
-
+	if(keypress)
+		m_startRecord = true;
 }
 
-void PlayerController::keyUp(unsigned char c)
-{
-	m_car->keyboardUp(c);
-	switch (c)
-	{
-	case 'a':
-		currentAction[OA_LEFT] = -1.0f;
-		break;
-	case 'd':
-		currentAction[OA_RIGHT] = -1.0f;
-		break;
-	case 'w':
-		currentAction[OA_UP] = -1.0f;
-		break;
-	case 's':
-		currentAction[OA_DOWN] = -1.0f;
-		break;
-
-	}
-	
-}
 
 void PlayerController::trainNN()
 {
@@ -107,13 +66,10 @@ void PlayerController::fixedStepUpdate()
 		return;
 	
 	trainData newdata;
-	memcpy(newdata.input, m_car->getSensorData().data, sizeof(newdata.input));
-	memcpy(newdata.output, currentAction, sizeof(currentAction));
+	memcpy(newdata.input, m_car->getSensorData()->data, sizeof(newdata.input));
+	memcpy(newdata.output, m_currentAction, sizeof(m_currentAction));
 	allTrainingData.push_back(newdata);
 
 	//prinfvector(newdata.input, IS_NUM);
 	//prinfvector(newdata.output, OA_NUM);
-
-
-	
 }

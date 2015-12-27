@@ -8,11 +8,7 @@
 #include "PlayerController.h"
 #include "AINNController.h"
 #include "BasicAIController.h"
-#include <tinytoml.h>
-
-extern PhysicsData g_physicsInfo;
-extern CTrack*		g_trackInfo;
-
+#include "Application.h"
 
 RaceManager::RaceManager()
 {
@@ -23,6 +19,7 @@ RaceManager::~RaceManager()
 {
 	for (unsigned int i = 0; i < m_numRacers; i++)
 		delete m_controllers[i];
+	delete[] m_controllers;
 }
 
 void RaceManager::loadRaceFromTOML(const char *filename)
@@ -33,6 +30,9 @@ void RaceManager::loadRaceFromTOML(const char *filename)
 	toml::Value* raceSettings = documentRoot.find("RaceSettings");
 	const toml::Array& racers = raceSettings->find("racers")->as<toml::Array>();
 
+	m_numRacers = racers.size();
+	m_controllers = new IController*[m_numRacers];
+
 	unsigned int i = 0;
 	for (const toml::Value& racer : racers)
 	{
@@ -41,7 +41,7 @@ void RaceManager::loadRaceFromTOML(const char *filename)
 
 		TopdownCar * car = new TopdownCar(i);
 
-		car->setPosition(g_trackInfo->getTrackPoint(0).center);
+		car->setPosition(TRACK->getTrackPoint(0).center);
 
 		if (racer_type.compare("basic_ai") == 0)
 		{
@@ -56,14 +56,30 @@ void RaceManager::loadRaceFromTOML(const char *filename)
 		m_controllers[i]->initController(car);
 		i++;
 	}
-
+	
 	
 }
 
-void RaceManager::Update()
+void RaceManager::keyEvent(const char key, bool pressed)
 {
 	for (unsigned int i = 0; i < m_numRacers; i++)
+		m_controllers[i]->keyEvent(key,pressed);
+}
+
+void RaceManager::updateModels()
+{
+	for (unsigned int i = 0; i < m_numRacers; i++)
+	{
+		m_controllers[i]->getCar()->step();
+	}
+}
+
+void RaceManager::updateControllers()
+{
+	for (unsigned int i = 0; i < m_numRacers; i++)
+	{
 		m_controllers[i]->fixedStepUpdate();
+	}
 }	
 
 void RaceManager::handleContact(b2Contact* contact, bool began)
@@ -84,32 +100,32 @@ void RaceManager::handleContact(b2Contact* contact, bool began)
 }
 
 
-void RaceManager::carVsGroundArea(b2Fixture* tireFixture, b2Fixture* groundAreaFixture, bool began)
+void RaceManager::carVsGroundArea(b2Fixture* carFixture, b2Fixture* groundAreaFixture, bool began)
 {
-	CarFUD *cFUD = (CarFUD*)tireFixture->GetUserData();
-	RaceSectorFUD* gaFud = (RaceSectorFUD*)groundAreaFixture->GetUserData();
+	CarFUD*			cFUD  = (CarFUD*)carFixture->GetUserData();
+	RaceSectorFUD*  gFUD  = (RaceSectorFUD*)groundAreaFixture->GetUserData();
+	
 	TopdownCar * car = NULL;
 	for (unsigned int i = 0; i < m_numRacers; i++)
-	{
-		if (m_controllers[i]->m_car->getID() == cFUD->getId())
-		{
-			car = m_controllers[i]->m_car;
-		}
+	{	
+		car = m_controllers[i]->getCar();
+		car = (car->getCarModel()->getId() != cFUD->getId()) ? NULL : car;
 	}
 
-	if (car == NULL)
-		return;
-
-
-	if (gaFud->idx == car->m_currentRaceSectorIdx + 1)
-		car->m_currentRaceSectorIdx++;
-
-	//m_currentRaceSectorIdx = gaFud->idx;
-	//printf("RACE SECTOR: %d  you have %f race done \n", m_currentRaceSectorIdx, (float)m_currentRaceSectorIdx / (g_trackInfo->getFinishLineRaceSectorIdx()));
-
-	if (car->m_currentRaceSectorIdx == (g_trackInfo->getFinishLineRaceSectorIdx()))
+	if (car != NULL)
 	{
-		printf("RACE LAP FINISHED \n");
-		car->m_currentRaceSectorIdx = 0;
+		unsigned int raceSector = car->getCurrentRaceSectorIdx();
+		if (gFUD->idx == raceSector + 1)
+			raceSector++;
+		//m_currentRaceSectorIdx = gaFud->idx;
+		//printf("RACE SECTOR: %d  you have %f race done \n", m_currentRaceSectorIdx, (float)m_currentRaceSectorIdx / (TRACK->getFinishLineRaceSectorIdx()));
+
+		if (raceSector == (TRACK->getFinishLineRaceSectorIdx()))
+		{
+			raceSector = 0;
+			printf("RACE LAP FINISHED \n");
+		}
+
+		car->setCurrentRaceSectorIdx(raceSector);
 	}
 }

@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "BasicAIController.h"
+#include "Car.h"
 #include <iostream>
 #include <iomanip>
 #include "Car.h"
@@ -28,56 +29,11 @@ void BasicAIController::initController(TopdownCar * car)
 		<< " [ A ] - turn left" << std::endl
 		<< " [ D ] - turn right" << std::endl
 		<< std::endl;
-
-	for (unsigned int i = 0; i < OA_NUM; i++)
-		currentAction[i] = -1.0f;
 }
 
-void BasicAIController::keyDown(unsigned char c)
+void BasicAIController::keyEvent(unsigned char c, bool keypress)
 {
-	m_car->keyboard(c);
 
-	switch (c)
-	{
-	case 'a':
-		currentAction[OA_LEFT] = 1.0f;
-		break;
-	case 'd':
-		currentAction[OA_RIGHT] = 1.0f;
-		break;
-	case 'w':
-		currentAction[OA_UP] = 1.0f;
-		break;
-	case 's':
-		currentAction[OA_DOWN] = 1.0f;
-		break;
-
-	}
-	m_startRecord = true;
-
-
-}
-
-void BasicAIController::keyUp(unsigned char c)
-{
-	m_car->keyboardUp(c);
-	switch (c)
-	{
-	case 'a':
-		currentAction[OA_LEFT] = -1.0f;
-		break;
-	case 'd':
-		currentAction[OA_RIGHT] = -1.0f;
-		break;
-	case 'w':
-		currentAction[OA_UP] = -1.0f;
-		break;
-	case 's':
-		currentAction[OA_DOWN] = -1.0f;
-		break;
-
-	}
-	
 }
 
 void BasicAIController::trainNN()
@@ -98,49 +54,34 @@ void BasicAIController::trainNN()
 BasicAIController::~BasicAIController()
 {
 
-	trainNN();
+	//trainNN();
 }
 
 void BasicAIController::fixedStepUpdate()
 {
 //	if (m_startRecord == false)
 //		return;
-	keyUp('a');keyUp('s');keyUp('d');keyUp('w');
+	m_currentAction[OA_DOWN] = m_currentAction[OA_LEFT] = m_currentAction[OA_RIGHT] = m_currentAction[OA_UP] = -1.0f;
+	
+	float *sensorData = m_car->getSensorData()->data;
 
-	float *sensorData = m_car->getSensorData().data;
 	if (sensorData[IS_CARDISTANCETOCENTERLINE] >= 0.2 )
-	{
-		keyDown('a');
-	}
+		m_currentAction[OA_LEFT] = 1.0f;
 	else
 	if (sensorData[IS_CARDISTANCETOCENTERLINE] <= -0.2)
-	{
-		keyDown('d');
-	}
-
-
-	if (sensorData[IS_RAYCAST0] < 0.05 )
-	{
-		//keyDown('s');
-	}
-	else
-	{
-		if(sensorData[IS_VELOCITY] < 0.01)
-			keyDown('w');
-	}
-
+		m_currentAction[OA_RIGHT] = 1.0f;
 	
-	
-	
+	if(sensorData[IS_RAYCAST0] >= 0.05 && sensorData[IS_VELOCITY] < 0.01)
+		m_currentAction[OA_UP] = 1.0f; 
 
-	trainData newdata;
-	memcpy(newdata.input, m_car->getSensorData().data, sizeof(newdata.input));
-	memcpy(newdata.output, currentAction, sizeof(currentAction));
-	allTrainingData.push_back(newdata);
+	m_car->setAction(m_currentAction);
+
+	//trainData newdata;
+	//memcpy(newdata.input, m_car->getSensorData().data, sizeof(newdata.input));
+	//memcpy(newdata.output, m_currentAction, sizeof(m_currentAction));
+	//allTrainingData.push_back(newdata);
 
 	//prinfvector(newdata.input, IS_NUM);
 	//prinfvector(newdata.output, OA_NUM);
-
-
 	
 }

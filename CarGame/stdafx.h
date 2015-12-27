@@ -18,9 +18,13 @@
 #endif
 
 #include "targetver.h"
+
+#define timegm _mkgmtime
+#include <time.h> 
+#include <tinytoml.h>
+#include <Windows.h>
 #include <stdio.h>
 #include <tchar.h>
-
 #include <GL/glew.h>
 #include <SDL.h>
 #include <Box2D/Box2D.h>
@@ -32,11 +36,12 @@
 #include <glm/glm.hpp>
 #include <fstream>
 
-#define timegm _mkgmtime
+
+
 #define LOG_MAX_SIZE 1024
 
-#define SCREEN_SIZE_WIDTH (1980)
-#define SCREEN_SIZE_HEIGHT (1080)
+#define SCREEN_SIZE_WIDTH (1024)
+#define SCREEN_SIZE_HEIGHT (768)
 
 enum INPUT_SENSOR_TYPE
 {
@@ -64,11 +69,13 @@ enum OUTPUT_ACTION_TYPE
 	OA_NUM
 };
 
+class Box2DDebugDraw;
 
 struct RenderData
 {
-	SDL_Window*	window;
+	SDL_Window*		window;
 	SDL_Renderer*	render;
+	Box2DDebugDraw*	ddraw;
 };
 
 struct PhysicsData
@@ -82,8 +89,34 @@ enum COLLISION_FILTERS
 	CATEGORY_STATIC = 0x0002
 };
 
+//types of fixture user data
+enum fixtureUserDataType
+{
+	FUD_CAR,
+	FUD_RACE_SECTOR
+};
+
+//a class to allow subclassing of different fixture user data
+class FixtureUserData
+{
+	fixtureUserDataType m_type;
+protected:
+	FixtureUserData(fixtureUserDataType type);
+public:
+	virtual fixtureUserDataType getType();
+	virtual ~FixtureUserData();
+};
+
+
 void prinfvector(float *v, unsigned int size);
 void fprinfvector(FILE*f, float *v, unsigned int size);
+float randomInterval(int min, int max);
+b2Vec2 lerp(b2Vec2 start, b2Vec2 end, float alpha);
+
+void checkSDLError(int line = -1);
+void APIENTRY openGlDebugCallback(GLenum source, GLenum type, GLuint id, 
+										GLenum severity, GLsizei length, const GLchar* message,
+										const void* userParam);
 
 void RotateVector(b2Vec2 vec, float angle, b2Vec2 &output);
 inline void Log(const char* fmt, ...)

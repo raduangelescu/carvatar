@@ -95,6 +95,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AINNController.h" />
+    <ClInclude Include="Application.h" />
     <ClInclude Include="BasicAIController.h" />
     <ClInclude Include="Box2DDebugDraw.h" />
     <ClInclude Include="Car.h" />
@@ -112,9 +113,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AINNController.cpp" />
+    <ClCompile Include="Application.cpp" />
     <ClCompile Include="BasicAiController.cpp" />
     <ClCompile Include="Box2DDebugDraw.cpp" />
     <ClCompile Include="Car.cpp" />
+    <ClCompile Include="IController.cpp" />
     <ClCompile Include="RaceManager.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="CarModel.cpp" />

@@ -2,13 +2,15 @@
 #include "stdafx.h"
 #include "CarModel.h"
 #include "Track.h"
-#include <tinytoml.h>
-
-extern PhysicsData	g_physicsInfo;
-extern CTrack*		g_trackInfo;
+#include "Application.h"
 
 CarFUD::CarFUD(unsigned int id) : FixtureUserData(FUD_CAR),m_id(id)
 {
+}
+
+CarFUD::~CarFUD()
+{
+
 }
 
 b2Vec2 CarModel::getLateralVelocity()
@@ -21,56 +23,6 @@ b2Vec2 CarModel::getForwardVelocity()
 {
 	b2Vec2 currentForwardNormal = m_body->GetWorldVector(b2Vec2(0, 1));
 	return b2Dot(currentForwardNormal, m_body->GetLinearVelocity()) * currentForwardNormal;
-}
-
-
-void CarModel::updateDrive(int controlState)
-{
-	m_body->SetAwake(true);
-	//find desired speed
-	float desiredSpeed = 0;
-	switch (controlState & (IA_UP | IA_DOWN)) 
-	{
-		case IA_UP:   
-			desiredSpeed = m_maxForwardSpeed;  
-			break;
-		case IA_DOWN: 
-			desiredSpeed = m_maxBackwardSpeed; 
-			break;
-		default: return;//do nothing
-	}
-
-	//find current speed in forward direction
-	b2Vec2 currentForwardNormal = m_body->GetWorldVector(b2Vec2(0, 1));
-	float currentSpeed = b2Dot(getForwardVelocity(), currentForwardNormal);
-
-	//apply necessary force
-	float force = 0;
-	if (desiredSpeed > currentSpeed)
-		force = m_maxDriveForce;
-	else if (desiredSpeed < currentSpeed)
-		force = -m_maxDriveForce;
-	else
-		return;
-
-	m_body->ApplyForce(m_currentTraction * force * currentForwardNormal , m_body->GetWorldCenter(), true);
-}
-
-void CarModel::updateTurn(int controlState)
-{
-	b2Vec2 currentForwardNormal = m_body->GetWorldVector(b2Vec2(0, 1));
-	float currentSpeed = b2Dot(getForwardVelocity(), currentForwardNormal);
-	if (fabs(currentSpeed) < 0.1f)
-		return;
-	float desiredTorque = 0;
-	switch (controlState & (IA_LEFT | IA_RIGHT)) 
-	{
-		case IA_LEFT:  desiredTorque = 15 * 0.001f;  break;
-		case IA_RIGHT: desiredTorque = -15 * 0.001f; break;
-		default:;//nothing
-	}
-	
-	m_body->ApplyTorque(desiredTorque, true);
 }
 
 b2Vec2  CarModel::getDirection()
@@ -125,9 +77,8 @@ CarModel::CarModel(b2World* world,unsigned int id)
 	
 	fixture->SetFilterData(filter);
 	fixture->SetUserData(new CarFUD(id));
-
+	
 	delete[] vertices;
-
 }
 
 void CarModel::setTransform(b2Vec2 position, float angle)
@@ -137,6 +88,7 @@ void CarModel::setTransform(b2Vec2 position, float angle)
 
 CarModel::~CarModel()
 {
+	PHYSX->world->DestroyBody(m_body);
 }
 
 void CarModel::updateFriction() 
@@ -156,9 +108,51 @@ void CarModel::updateFriction()
 	float dragForceMagnitude = -2 * currentForwardSpeed;
 	m_body->ApplyForce(m_currentTraction* 0.23 * dragForceMagnitude * currentForwardNormal, m_body->GetWorldCenter(), true);
 }
+void CarModel::updateDrive(float* controlState)
+{
+	m_body->SetAwake(true);
+	//find desired speed
+	float desiredSpeed = 0;
 
 
-void CarModel::update(int controlState)
+	if (controlState[OA_UP] > 0.0f)
+		desiredSpeed = m_maxForwardSpeed;
+	if (controlState[OA_DOWN] > 0.0f)
+		desiredSpeed = m_maxBackwardSpeed;
+
+	//find current speed in forward direction
+	b2Vec2 currentForwardNormal = m_body->GetWorldVector(b2Vec2(0, 1));
+	float currentSpeed = b2Dot(getForwardVelocity(), currentForwardNormal);
+
+	//apply necessary force
+	float force = 0;
+	if (desiredSpeed > currentSpeed)
+		force = m_maxDriveForce;
+	else if (desiredSpeed < currentSpeed)
+		force = -m_maxDriveForce;
+	else
+		return;
+
+	m_body->ApplyForce(m_currentTraction * force * currentForwardNormal, m_body->GetWorldCenter(), true);
+}
+
+void CarModel::updateTurn(float* controlState)
+{
+	b2Vec2 currentForwardNormal = m_body->GetWorldVector(b2Vec2(0, 1));
+	float currentSpeed = b2Dot(getForwardVelocity(), currentForwardNormal);
+	if (fabs(currentSpeed) < 0.1f)
+		return;
+	float desiredTorque = 0;
+
+	if (controlState[OA_LEFT] > 0.0f)
+		desiredTorque = 15 * 0.001f;
+	if (controlState[OA_RIGHT] > 0.0f)
+		desiredTorque = -15 * 0.001f;
+
+	m_body->ApplyTorque(desiredTorque, true);
+}
+
+void CarModel::update(float* controlState)
 {
 	updateFriction();
 	updateDrive(controlState);
@@ -170,7 +164,6 @@ void CarModel::setPosition(b2Vec2 position)
 	m_body->SetActive(false);
 	m_body->SetAwake(false);
 	m_body->SetTransform(position, 0.0f);
-	
 
 	m_body->SetActive(true);
 	m_body->SetAwake(true);

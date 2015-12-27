@@ -14,41 +14,31 @@ struct CarSensorData
 
 class TopdownCar 
 {
-
-	struct STopDownCarSettings
-	{
-		float max_forward_speed;
-		float max_backward_speed;
-		float back_tire_max_drive_force;
-		float front_tire_max_drive_force;
-		float back_tire_max_lateral_impulse;
-		float front_tire_max_lateral_impulse;
-		float body_density;
-		
-	}m_settings; // read from TOML file
-
 	CarSensorData	m_sensorData;
-private:
-	float Raycast(b2Vec2 dir, float distance);
+	
 public:
-	TopdownCar(unsigned int id);
 
+	TopdownCar(unsigned int id);
 	~TopdownCar();
 
-	void keyboard(unsigned char key);
-	void keyboardUp(unsigned char key);
-	
-	
-	
 	void step();
 
-	b2Vec2 getPosition();
-	void setPosition(b2Vec2 pos);
-	CarSensorData & getSensorData() { return m_sensorData; }
+	void setAction(float *currentAction);
 
-	b2Body* m_groundBody;
-	CarModel* m_car;
+	b2Vec2 getPosition();
+	void   setPosition(b2Vec2 pos);
 	
-	int m_controlState;
+	CarModel*      getCarModel()  { return m_car; }
+	CarSensorData* getSensorData(){ return &m_sensorData; }
+
+	unsigned int   getCurrentRaceSectorIdx()				{ return m_currentRaceSectorIdx; }
+	void		   setCurrentRaceSectorIdx(unsigned int s) { m_currentRaceSectorIdx = s; }
+
+private:
+	CarModel*    m_car;
+	float        m_controlState[OA_NUM];
 	unsigned int m_currentRaceSectorIdx;
+
+
+
 };

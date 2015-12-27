@@ -1,10 +1,7 @@
 #include "stdafx.h"
 #include "Track.h"
-#include <tinytoml.h>
 #include "Box2DDebugDraw.h"
-
-extern PhysicsData g_physicsInfo;
-extern Box2DDebugDraw* g_debugDraw;
+#include "Application.h"
 
 RaceSectorFUD::RaceSectorFUD(int _idx) : FixtureUserData(FUD_RACE_SECTOR), idx(_idx){}
 
@@ -15,7 +12,7 @@ CTrack::CTrack()
 
 void CTrack::destroyPhysicsBody()
 {
-	g_physicsInfo.world->DestroyBody(m_groundBody);
+	PHYSX->world->DestroyBody(m_groundBody);
 }
 
 void CTrack::clear()
@@ -48,14 +45,14 @@ float CTrack::getSectorDistanceToCenterline(const unsigned int idx, b2Vec2 carPo
 	ortho.Normalize();
 
 	float dot = ortho.x * carPosInTrackSector.x + ortho.y * carPosInTrackSector.y;
-	float proj = dot/ m_settings.track_width;
+	float proj = dot/m_trackWidth;
 	
 
 	DebugLine l;
 	l.p1 = m_points[nextIdx].center;
-	l.p2 = l.p1 + proj * m_settings.track_width * ortho ;
+	l.p2 = l.p1 + proj * m_trackWidth * ortho ;
 
-	g_debugDraw->debug_lines.push_back(l);
+	RENDER->ddraw->debug_lines.push_back(l);
 
 
 	printf("%f value\n", proj);
@@ -82,8 +79,8 @@ void CTrack::lerpInterval(int startIdx, int endIdx, b2Vec2* points, int size)
 	const int lenInterval = endIdx - startIdx;
 	for (int j = startIdx; j < endIdx && j < size; j++)
 	{
-		const float ammount = 1.0f - (endIdx - j) / (float)m_settings.down_step;
-		points[j] = Lerp(points[startIdx], points[endIdx], ammount);
+		const float ammount = 1.0f - (endIdx - j) / (float)m_downStep;
+		points[j] = lerp(points[startIdx], points[endIdx], ammount);
 	}
 }
 
@@ -94,41 +91,41 @@ void CTrack::genCenterline(b2Vec2 *points)
 	// generate first important points 
 	// with a low sample rate (given by the downstep)
 	int i;
-	for (i = 0; i < m_settings.track_size; i += m_settings.down_step)
+	for (i = 0; i < m_trackSize; i += m_downStep)
 	{
-		float randomRadius = randomInterval(m_settings.radius_curvature[0], m_settings.radius_curvature[1]);
-		float randomValue =  randomInterval(m_settings.hard_curvature_probability[0], m_settings.hard_curvature_probability[1]);
-		float offsetconst = (randomValue >= m_settings.hard_curvature_probability[2]) ? (float)m_settings.hard_curvature_value : (float)m_settings.radius_offset_curvature;
+		float randomRadius = randomInterval(m_radiusCurvature[0], m_radiusCurvature[1]);
+		float randomValue =  randomInterval(m_hardCurvatureProbability[0], m_hardCurvatureProbability[1]);
+		float offsetconst = (randomValue >= m_hardCurvatureProbability[2]) ? (float)m_hardCurvatureValue : (float)m_radiusOffsetCurvature;
 		float radius	  = offsetconst + randomRadius;
 
-		float alpha = ((360.0f / (m_settings.track_size - 1)) * i) * DEGTORAD;
+		float alpha = glm::radians(((360.0f / (m_trackSize - 1)) * i));
 		// control point
 		points[i] = centerOfTrack + radius * b2Vec2(sin(alpha), cos(alpha));
 
 		// fill in the rest of the interval
-		const int startIntervalIdx = i - m_settings.down_step;
+		const int startIntervalIdx = i - m_downStep;
 		if (startIntervalIdx >= 0)
 		{
 			const int endIntervalIdx = i;
-			lerpInterval(startIntervalIdx, endIntervalIdx, points, m_settings.track_size);
+			lerpInterval(startIntervalIdx, endIntervalIdx, points, m_trackSize);
 		}
 	}
 	//Make the end point be the start point
-	points[m_settings.track_size - 1] = points[0];
+	points[m_trackSize - 1] = points[0];
 	//lerp last part if track_size is not a multiple of downstep
-	if (i >= m_settings.track_size)
+	if (i >= m_trackSize)
 	{
-		lerpInterval(i - m_settings.down_step, m_settings.track_size - 1, points, m_settings.track_size);
+		lerpInterval(i - m_downStep, m_trackSize - 1, points, m_trackSize);
 	}
 
 	//apply a simple smooth filter (moving average 3, centered)
-	for (int i = 0; i < m_settings.smooth_iterations; i++)
+	for (int i = 0; i < m_smoothIterations; i++)
 	{
-		for (int k = 0; k <  m_settings.track_size; k++)
+		for (int k = 0; k <  m_trackSize; k++)
 		{
 			// wrap around index
-			int prev_idx = ((k - 1) < 0) ? (m_settings.track_size - 1) : (k - 1);
-			int next_idx = ((k + 1) >= m_settings.track_size) ? 0: (k + 1);
+			int prev_idx = ((k - 1) < 0) ? (m_trackSize - 1) : (k - 1);
+			int next_idx = ((k + 1) >= m_trackSize) ? 0: (k + 1);
 			
 			// moving average
 			points[k] = 1/3.f *(points[prev_idx] + points[k] + points[next_idx]);
@@ -140,7 +137,7 @@ void CTrack::genCenterline(b2Vec2 *points)
 void CTrack::genPhysicsTrackRepresentation()
 {
 	b2BodyDef bodyDef;
-	m_groundBody = g_physicsInfo.world->CreateBody(&bodyDef);
+	m_groundBody = PHYSX->world->CreateBody(&bodyDef);
 	b2Filter filter;
 	filter.categoryBits = CATEGORY_STATIC;
 	filter.maskBits = (uint16)(-1);
@@ -205,10 +202,10 @@ void CTrack::genPhysicsTrackRepresentation()
 
 void CTrack::genLogicalTrackRepresentation(b2Vec2 *points)
 {
-	m_allPointsSize = m_settings.track_size;
+	m_allPointsSize = m_trackSize;
 
 	m_points = new SGenTrackNode[m_allPointsSize];
-	float hwidth = m_settings.track_width / 2.0f;
+	float hwidth = m_trackWidth / 2.0f;
 
 	for (unsigned int i = 0; i < m_allPointsSize - 1; i++)
 	{
@@ -222,7 +219,7 @@ void CTrack::genLogicalTrackRepresentation(b2Vec2 *points)
 		m_points[i].direction = dir;
 		m_points[i].inner	  = points[i] + hwidth * ortho;
 		m_points[i].outer	  = points[i] - hwidth * ortho;
-		m_points[i].width     = m_settings.track_width;
+		m_points[i].width     = m_trackWidth;
 	}
 	// complete the circle
 	// use points[1] because [0] is the same as m_points[m_allPointsSize-1];
@@ -236,17 +233,17 @@ void CTrack::genLogicalTrackRepresentation(b2Vec2 *points)
 	m_points[endidx].inner  = points[endidx] + hwidth * orthow;
 	m_points[endidx].outer  = points[endidx] - hwidth * orthow;
 	m_points[endidx].center = points[endidx];
-	m_points[endidx].width  = m_settings.track_width;
+	m_points[endidx].width  = m_trackWidth;
 }
 
 void CTrack::genTrack()
 {
 	loadSettingsFromTOML("TrackGeneration.TOML");
 	m_finishLineRaceSectorIdx = 0;
-	m_allPointsSize = m_settings.track_size;
-	m_downStep		= m_settings.down_step;
+	m_allPointsSize = m_trackSize;
+	m_downStep		= m_downStep;
 	m_trackLength	= 0.0f;
-	m_sectorStep	= m_settings.sector_step;
+	m_sectorStep	= m_sectorStep;
 
 	b2Vec2 *centerlinePoints = new b2Vec2[m_allPointsSize];
 	
@@ -264,30 +261,30 @@ void CTrack::loadSettingsFromTOML(const char *filename)
 	toml::Value documentRoot   = parser.parse();
 	toml::Value* trackSettings = documentRoot.find("tracksettings");
 	
-	m_settings.track_size				= trackSettings->find("track_size")->as<int>();
-	m_settings.down_step				= trackSettings->find("down_step")->as<int>();
-	m_settings.sector_step				= trackSettings->find("sector_step")->as<int>();
-	m_settings.track_width				= trackSettings->find("track_width")->as<int>();
-	m_settings.radius_offset_curvature  = trackSettings->find("radius_offset_curvature")->as<int>();
-	m_settings.hard_curvature_value     = trackSettings->find("hard_curvature_value")->as<int>();
-	m_settings.smooth_iterations        = trackSettings->find("smooth_iterations")->as<int>();
+	m_trackSize					= trackSettings->find("track_size")->as<int>();
+	m_downStep					= trackSettings->find("down_step")->as<int>();
+	m_sectorStep				= trackSettings->find("sector_step")->as<int>();
+	m_trackWidth				= trackSettings->find("track_width")->as<int>();
+	m_radiusOffsetCurvature		= trackSettings->find("radius_offset_curvature")->as<int>();
+	m_hardCurvatureValue		= trackSettings->find("hard_curvature_value")->as<int>();
+	m_smoothIterations			= trackSettings->find("smooth_iterations")->as<int>();
 
 	const toml::Array& radius_curvature				= trackSettings->find("radius_curvature")->as<toml::Array>();
 	const toml::Array& hard_curvature_probability   = trackSettings->find("hard_curvature_probability")->as<toml::Array>();
 	const toml::Array& physics_wall_size_inner		= trackSettings->find("physics_wall_size_inner")->as<toml::Array>();
 	const toml::Array& physics_wall_size_outer		= trackSettings->find("physics_wall_size_outer")->as<toml::Array>();
 
-	m_settings.radius_curvature[0] = radius_curvature.at(0).as<int>();
-	m_settings.radius_curvature[1] = radius_curvature.at(1).as<int>();
+	m_radiusCurvature[0] = radius_curvature.at(0).as<int>();
+	m_radiusCurvature[1] = radius_curvature.at(1).as<int>();
 
-	m_settings.hard_curvature_probability[0] = hard_curvature_probability.at(0).as<int>();
-	m_settings.hard_curvature_probability[1] = hard_curvature_probability.at(1).as<int>();
-	m_settings.hard_curvature_probability[2] = hard_curvature_probability.at(2).as<int>();
+	m_hardCurvatureProbability[0] = hard_curvature_probability.at(0).as<int>();
+	m_hardCurvatureProbability[1] = hard_curvature_probability.at(1).as<int>();
+	m_hardCurvatureProbability[2] = hard_curvature_probability.at(2).as<int>();
 	
-	m_settings.physics_wall_size_inner[0] = physics_wall_size_inner.at(0).as<double>();
-	m_settings.physics_wall_size_inner[1] = physics_wall_size_inner.at(1).as<double>();		
+	m_physicsWallSizeInner[0] = physics_wall_size_inner.at(0).as<double>();
+	m_physicsWallSizeInner[1] = physics_wall_size_inner.at(1).as<double>();		
 
-	m_settings.physics_wall_size_outer[0] = physics_wall_size_outer.at(0).as<double>();
-	m_settings.physics_wall_size_outer[1] = physics_wall_size_outer.at(1).as<double>();
+	m_physicsWallSizeOuter[0] = physics_wall_size_outer.at(0).as<double>();
+	m_physicsWallSizeOuter[1] = physics_wall_size_outer.at(1).as<double>();
 	
 }

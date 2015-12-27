@@ -10,9 +10,12 @@ public:
 	RaceManager();
 	~RaceManager();
 
+	void keyEvent(const char key, bool pressed);
 	void loadRaceFromTOML(const char *filename);
 
-	void Update();
+	void updateControllers();
+	void updateModels();
+
 	void BeginContact(b2Contact* contact) { handleContact(contact, true); }
 	void EndContact(b2Contact* contact) { handleContact(contact, false); }
 

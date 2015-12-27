@@ -45,6 +45,7 @@
     <ClInclude Include="RaceManager.h">
       <Filter>Manager</Filter>
     </ClInclude>
+    <ClInclude Include="Application.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
@@ -79,6 +80,10 @@
     <ClCompile Include="RaceManager.cpp">
       <Filter>Manager</Filter>
     </ClCompile>
+    <ClCompile Include="IController.cpp">
+      <Filter>Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="Application.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="CarPhysics">

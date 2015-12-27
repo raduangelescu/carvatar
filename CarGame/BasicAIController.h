@@ -3,13 +3,12 @@
 
 class BasicAIController : public IController
 {
-	float currentAction[OA_NUM];
+
 public:
 	BasicAIController();
 
 	virtual void initController(TopdownCar * car);
-	virtual void keyDown(unsigned char);
-	virtual void keyUp(unsigned char);
+	virtual void keyEvent(unsigned char c, bool keypress);
 	virtual void fixedStepUpdate();
 	
 	void trainNN();

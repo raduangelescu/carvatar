@@ -18,14 +18,17 @@ struct trainData
 
 class IController
 {
-public:
-	virtual void initController(TopdownCar * car) { m_car = car; }
 
-	virtual void keyDown(unsigned char) = 0;
-	virtual void keyUp(unsigned char) = 0;
+protected:
+	float m_currentAction[OA_NUM];
+
+public:
+	virtual void initController(TopdownCar * car);
+
+	virtual void keyEvent(unsigned char c, bool keypress);
 
 	virtual void fixedStepUpdate() = 0;
-	virtual ~IController() {}
+	virtual ~IController();
 
 	TopdownCar *getCar() { return m_car; }
 protected:

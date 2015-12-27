@@ -9,6 +9,7 @@ class CarFUD : public FixtureUserData
 	unsigned int m_id;
 public:
 	CarFUD(unsigned int id);
+	~CarFUD();
 
 	unsigned int getId() { return m_id; }
 };
@@ -33,7 +34,7 @@ public:
 	CarModel(b2World* world, unsigned int id);
 	~CarModel();
 
-	void update(int controlState);
+	void update(float* controlState);
 	b2Body*	getBody() { return m_body; }
 	b2Vec2  getDirection();
 	float getMaxFrontSpeed() { return m_maxForwardSpeed; }
@@ -42,8 +43,8 @@ public:
 	b2Vec2 getLateralVelocity();
 	b2Vec2 getForwardVelocity();
 
-	void   updateDrive(int controlState);
-	void   updateTurn(int controlState);
+	void   updateDrive(float* controlState);
+	void   updateTurn(float* controlState);
 	void   updateFriction();
 	
 	unsigned int getId() { return m_id; }

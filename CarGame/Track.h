@@ -2,8 +2,6 @@
 
 #include "Common.h"
 
-extern PhysicsData g_physicsInfo;
-
 //class to allow marking a fixture as a ground area
 class RaceSectorFUD : public FixtureUserData 
 {
@@ -25,27 +23,22 @@ struct SGenTrackNode
 
 class CTrack
 {
-	struct STrackGenSettings
-	{
-		int track_size;
-		int down_step;
-		int sector_step;
-		int track_width;
-		int radius_curvature[2];
-		int radius_offset_curvature;
-		int hard_curvature_probability[3];
-		int hard_curvature_value;
-		int	smooth_iterations;
-		float physics_wall_size_inner[2];
-		float physics_wall_size_outer[2];
-
-	}m_settings; // read from TOML file
+	//Track settings
+	int		m_trackSize;
+	int		m_downStep;
+	int		m_sectorStep;
+	int		m_trackWidth;
+	int		m_radiusCurvature[2];
+	int		m_radiusOffsetCurvature;
+	int		m_hardCurvatureProbability[3];
+	int		m_hardCurvatureValue;
+	int		m_smoothIterations;
+	float	m_physicsWallSizeInner[2];
+	float	m_physicsWallSizeOuter[2];
+	//
 
 	unsigned int m_allPointsSize;
-	unsigned int m_downStep;
 	unsigned int m_finishLineRaceSectorIdx;
-	unsigned int m_sectorStep;
-
 	float		 m_trackLength;
 
 	SGenTrackNode			*m_points;
