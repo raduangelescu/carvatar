@@ -76,7 +76,7 @@ float Raycast(b2Vec2 startPosition, b2Vec2 dir, float distance)
 	l.p2 = p1 + distance * closestFraction * dir;
 
 	RENDER->ddraw->debug_lines.push_back(l);
-
+	
 	return closestFraction;
 }
 
@@ -89,7 +89,7 @@ void TopdownCar::step()
 	//normalized
 	m_sensorData.data[IS_VELOCITY]= m_car->getBody()->GetLinearVelocity().Length()/m_car->getMaxFrontSpeed();
 	
-	SGenTrackNode& sector =  TRACK->getTrackPoint(m_currentRaceSectorIdx);
+	SGenTrackNode& sector =  TRACK->getSectorPoint(m_currentRaceSectorIdx);
 
 	//normalized
 	static float maxDistance = TRACK->getDistanceToFinishLine(0);
@@ -100,7 +100,7 @@ void TopdownCar::step()
 	//normalized?
 	m_sensorData.data[IS_TRACKANGLE]			  = (cardirection.x * trackdirection.x + cardirection.y * trackdirection.y + 1.0f)/2.0f;
 
-	m_sensorData.data[IS_CARDISTANCETOCENTERLINE] = TRACK->getSectorDistanceToCenterline(m_currentRaceSectorIdx + 1, m_car->getBody()->GetPosition());
+	m_sensorData.data[IS_CARDISTANCETOCENTERLINE] = TRACK->getSectorDistanceToCenterline(m_currentRaceSectorIdx + 2, m_car->getBody()->GetPosition());
 	b2RayCastInput input;
 	
 	float rayLength = 100; //long enough to hit the walls

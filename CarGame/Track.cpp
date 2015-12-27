@@ -25,9 +25,11 @@ CTrack::~CTrack()
 
 }
 
-SGenTrackNode & CTrack::getTrackPoint(const unsigned int idx)
+SGenTrackNode & CTrack::getSectorPoint(const unsigned int idx)
 {
-	return m_points[idx * m_sectorStep];
+	unsigned int numSectors = m_allPointsSize / m_sectorStep;
+	unsigned currentidx = (idx % numSectors)* m_sectorStep;
+	return m_points[currentidx];
 }
 
 float CTrack::getSectorDistanceToCenterline(const unsigned int idx, b2Vec2 carPos)
@@ -54,8 +56,6 @@ float CTrack::getSectorDistanceToCenterline(const unsigned int idx, b2Vec2 carPo
 
 	RENDER->ddraw->debug_lines.push_back(l);
 
-
-	printf("%f value\n", proj);
 
 	return proj;
 }

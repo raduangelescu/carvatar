@@ -41,7 +41,7 @@ void RaceManager::loadRaceFromTOML(const char *filename)
 
 		TopdownCar * car = new TopdownCar(i);
 
-		car->setPosition(TRACK->getTrackPoint(0).center);
+		car->setPosition(TRACK->getSectorPoint(0).center);
 
 		if (racer_type.compare("basic_ai") == 0)
 		{

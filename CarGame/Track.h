@@ -59,7 +59,7 @@ public:
 	float			getDistanceToFinishLine(const unsigned int idx);
 	float			getSectorDistanceToCenterline(const unsigned int idx, b2Vec2 carPos);
 	float			getTotalTrackLength() { return m_trackLength; }
-	SGenTrackNode & getTrackPoint(const unsigned int idx);
+	SGenTrackNode & getSectorPoint(const unsigned int idx);
 	unsigned int	getFinishLineRaceSectorIdx() { return m_finishLineRaceSectorIdx; }
 	b2Body*			getGroundBody() { return m_groundBody; }
 	
