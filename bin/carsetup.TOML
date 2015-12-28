@@ -11,7 +11,7 @@ angular_damping = 0.1
 angular_friction = 0.023
 body_density  = 0.1
 traction = 0.1
-drift_friction = 0.5
+drift_friction = 0.1
 drag_modifier = 0.01
 steer_allow_speed = 0.1
 
