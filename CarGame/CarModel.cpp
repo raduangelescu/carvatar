@@ -144,7 +144,7 @@ void CarModel::updateDrive(float* controlState)
 
 	//apply necessary force
 	float force = (desiredSpeed > currentSpeed) ? m_maxDriveForce : -m_maxDriveForce;
-	if (desiredSpeed != desiredSpeed)
+	if (desiredSpeed != currentSpeed)
 	{
 		m_body->ApplyForce(m_currentTraction * force * currentForwardNormal, m_body->GetWorldCenter(), true);
 	}
@@ -160,7 +160,6 @@ void CarModel::updateTurn(float* controlState)
 		desiredTorque = torque;
 	if (controlState[OA_RIGHT] > 0.0f)
 		desiredTorque = -torque;
-
 	// reverse the torque if we are going backwars
 	if (controlState[OA_DOWN] > 0.0f)
 		desiredTorque = -desiredTorque;

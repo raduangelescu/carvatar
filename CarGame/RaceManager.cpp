@@ -36,7 +36,9 @@ void RaceManager::loadRaceFromTOML(const char *filename)
 	unsigned int i = 0;
 	for (const toml::Value& racer : racers)
 	{
+		// To be used :)
 		std::string racer_name = racer.find("name")->as<std::string>();
+		
 		std::string racer_type = racer.find("type")->as<std::string>();
 		const toml::Value *color = racer.find("color");
 	
@@ -47,14 +49,30 @@ void RaceManager::loadRaceFromTOML(const char *filename)
 		if (racer_type.compare("basic_ai") == 0)
 		{
 			m_controllers[i] = new BasicAIController();
+		
 		}
 		else if (racer_type.compare("player") == 0)
 		{
 			m_controllers[i] = new PlayerController();
 		}
 
+
 		// link controller to car;
 		m_controllers[i]->initController(car);
+
+		// get Params if any
+		const toml::Value * params = racer.find("params");
+		if (params)
+		{
+			const toml::Array vparams = params->as<toml::Array>();
+			((BasicAIController*)m_controllers[i])->setParams(
+				vparams.at(0).as<double>(),
+				vparams.at(1).as<double>(),
+				vparams.at(2).as<double>(),
+				vparams.at(3).as<double>(),
+				vparams.at(4).as<double>());
+		}
+
 		i++;
 	}
 	
