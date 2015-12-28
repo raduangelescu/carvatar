@@ -44,6 +44,11 @@ void BasicAIController::setParams(float maxspeed, float angletoturn, float dista
 	m_params[EBASICAI_ANGLETOTURNSPEEDINFLUENCE] = angletoturnspeedinfluence;
 }
 
+void BasicAIController::setParams(float *params)
+{
+	memcpy(m_params, params, sizeof(m_params));
+}
+
 void BasicAIController::fixedStepUpdate()
 {
 

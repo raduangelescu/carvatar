@@ -24,6 +24,7 @@ public:
 	virtual void fixedStepUpdate();
 	
 	void setParams(float maxspeed, float angletoturn, float distancetofrontwallstop, float lookahead, float angletoturnspeedinfluence);
+	void setParams(float *params);
 
 	~BasicAIController();
 
