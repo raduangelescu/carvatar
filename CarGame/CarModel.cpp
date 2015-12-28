@@ -34,12 +34,15 @@ b2Vec2  CarModel::getDirection()
 CarModel::CarModel(b2World* world,unsigned int id)
 {
 	m_id = id;
+	//open the file
 	std::ifstream ifs("carsetup.TOML");
+	//make TOML parser
 	toml::Parser parser(ifs);
 	
 	toml::Value documentRoot = parser.parse();
 	toml::Value* params = documentRoot.find("carparams");
-
+	
+	// Populate our physic parameters
 	m_maxForwardSpeed	= (float)params->find("max_forward_speed")->as<double>();
 	m_maxBackwardSpeed	= (float)params->find("max_backward_speed")->as<double>();
 	m_maxDriveForce		= (float)params->find("max_drive_force")->as<double>();
@@ -54,7 +57,7 @@ CarModel::CarModel(b2World* world,unsigned int id)
 	m_dragModifier		= (float)params->find("drag_modifier")->as<double>();
 	m_steerAllowSpeed	= (float)params->find("steer_allow_speed")->as<double>();
 
-
+	// Read our polygonal car body vertices
 	toml::Value* carBodyParams = documentRoot.find("carbody");
 
 	const toml::Array& bodyVertices = carBodyParams->find("body_vertices")->as<toml::Array>();
@@ -67,23 +70,31 @@ CarModel::CarModel(b2World* world,unsigned int id)
 		vertices[k++].Set(bodyVerticesCoords.at(0).asNumber(), bodyVerticesCoords.at(1).asNumber());
 	}
 
-	//create car body
+	// Create the car body definition 
 	b2BodyDef bodyDef;
+	// Mark it as dynamic (it's a car so it will move :) )
 	bodyDef.type = b2_dynamicBody;
+	// This creates and adds the body to the world (adds it as the first element of the double linked list) 
 	m_body = world->CreateBody(&bodyDef);
+	// We set the angular damping
 	m_body->SetAngularDamping(m_angularDamping);
 
+	// Create the poly shape from the vertices and link it to a fixture
 	b2PolygonShape polygonShape;
 	polygonShape.Set(vertices, bodyVertices.size());
 	b2Fixture* fixture = m_body->CreateFixture(&polygonShape, m_bodyDensity);
 
+	// Set the collision filter for our car (it should only collide with static, i.e walls)
 	b2Filter filter;
 	filter.categoryBits = CATEGORY_CAR;
 	filter.maskBits		= CATEGORY_STATIC;
 	
 	fixture->SetFilterData(filter);
+
+	// Set user data so we can identify our car in a possible collision, or sensor trigger
 	fixture->SetUserData(new CarFUD(id));
 	
+	// Cleanup
 	delete[] vertices;
 }
 
@@ -99,10 +110,11 @@ CarModel::~CarModel()
 
 void CarModel::updateFriction() 
 {
+	//calculate the counter lateral impulse based on drift parameters
 	b2Vec2 impulse = m_body->GetMass() * -getLateralVelocity();
 	if (impulse.Length() > m_maxLateralImpulse)
 		impulse *= m_maxLateralImpulse / impulse.Length();
-
+	// apply the impulse
 	m_body->ApplyLinearImpulse(m_driftFriction * impulse, m_body->GetWorldCenter(), true);
 
 	//angular velocity
@@ -117,11 +129,10 @@ void CarModel::updateFriction()
 }
 void CarModel::updateDrive(float* controlState)
 {
+	//wake the body, it could be in a sleep state
 	m_body->SetAwake(true);
 	//find desired speed
 	float desiredSpeed = 0;
-
-
 	if (controlState[OA_UP] > 0.0f)
 		desiredSpeed = m_maxForwardSpeed;
 	if (controlState[OA_DOWN] > 0.0f)
@@ -132,31 +143,25 @@ void CarModel::updateDrive(float* controlState)
 	float currentSpeed = b2Dot(getForwardVelocity(), currentForwardNormal);
 
 	//apply necessary force
-	float force = 0;
-	if (desiredSpeed > currentSpeed)
-		force = m_maxDriveForce;
-	else if (desiredSpeed < currentSpeed)
-		force = -m_maxDriveForce;
-	else
-		return;
-
-	m_body->ApplyForce(m_currentTraction * force * currentForwardNormal, m_body->GetWorldCenter(), true);
+	float force = (desiredSpeed > currentSpeed) ? m_maxDriveForce : -m_maxDriveForce;
+	if (desiredSpeed != desiredSpeed)
+	{
+		m_body->ApplyForce(m_currentTraction * force * currentForwardNormal, m_body->GetWorldCenter(), true);
+	}
 }
 
 void CarModel::updateTurn(float* controlState)
 {
-	b2Vec2 currentForwardNormal = m_body->GetWorldVector(b2Vec2(0, 1));
-	float currentSpeed = b2Dot(getForwardVelocity(), currentForwardNormal);
-	float turnRate = currentSpeed / m_maxForwardSpeed;
-	if (controlState[OA_DOWN] > 0.0f)
-		turnRate = currentSpeed / m_maxBackwardSpeed;
 
 	float desiredTorque = 0;
+	// set our torque
 	float torque = m_steerTorque  + m_steerTorqueOffset;
 	if (controlState[OA_LEFT] > 0.0f)
 		desiredTorque = torque;
 	if (controlState[OA_RIGHT] > 0.0f)
 		desiredTorque = -torque;
+
+	// reverse the torque if we are going backwars
 	if (controlState[OA_DOWN] > 0.0f)
 		desiredTorque = -desiredTorque;
 
