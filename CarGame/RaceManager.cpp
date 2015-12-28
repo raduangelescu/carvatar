@@ -38,8 +38,9 @@ void RaceManager::loadRaceFromTOML(const char *filename)
 	{
 		std::string racer_name = racer.find("name")->as<std::string>();
 		std::string racer_type = racer.find("type")->as<std::string>();
-
-		TopdownCar * car = new TopdownCar(i);
+		const toml::Value *color = racer.find("color");
+	
+		TopdownCar * car = new TopdownCar(i, b2Color(color->find("r")->as<double>(), color->find("g")->as<double>(), color->find("b")->as<double>()));
 
 		car->setPosition(TRACK->getSectorPoint(0).center);
 
@@ -129,5 +130,13 @@ void RaceManager::carVsGroundArea(b2Fixture* carFixture, b2Fixture* groundAreaFi
 		}
 
 		car->setCurrentRaceSectorIdx(raceSector);
+	}
+}
+
+void RaceManager::debugDraw()
+{
+	for (unsigned int i = 0; i < m_numRacers; i++)
+	{
+		m_controllers[i]->getCar()->debugDraw();
 	}
 }

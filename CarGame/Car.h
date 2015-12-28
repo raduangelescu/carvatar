@@ -14,11 +14,12 @@ struct CarSensorData
 
 class TopdownCar 
 {
+	b2Color			m_debugColor;
 	CarSensorData	m_sensorData;
 	
 public:
 
-	TopdownCar(unsigned int id);
+	TopdownCar(unsigned int id,b2Color color);
 	~TopdownCar();
 
 	void step();
@@ -33,6 +34,8 @@ public:
 
 	unsigned int   getCurrentRaceSectorIdx()				{ return m_currentRaceSectorIdx; }
 	void		   setCurrentRaceSectorIdx(unsigned int s) { m_currentRaceSectorIdx = s; }
+
+	void debugDraw();
 
 private:
 	CarModel*    m_car;

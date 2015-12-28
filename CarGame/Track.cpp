@@ -300,5 +300,47 @@ void CTrack::loadSettingsFromTOML(const char *filename)
 
 	m_physicsWallSizeOuter[0] = physics_wall_size_outer.at(0).as<double>();
 	m_physicsWallSizeOuter[1] = physics_wall_size_outer.at(1).as<double>();
+
+	const toml::Value * colorSector = trackSettings->find("color_sectors");
+	const toml::Value * colorWall   = trackSettings->find("color_wall");
+
+	m_debugColorSectors = b2Color(colorSector->find("r")->as<double>(), colorSector->find("g")->as<double>(), colorSector->find("b")->as<double>()) ;
+	m_debugColorWall    = b2Color(colorWall->find("r")->as<double>(), colorWall->find("g")->as<double>(), colorWall->find("b")->as<double>());
 	
+}
+
+void	CTrack::debugDraw()
+{
+	b2Body * body = m_groundBody;
+	const b2Transform& xf = body->GetTransform();
+	for (b2Fixture* f = body->GetFixtureList(); f; f = f->GetNext())
+	{
+		switch (f->GetType())
+		{
+			case b2Shape::e_polygon:
+			{
+				b2PolygonShape* poly = (b2PolygonShape*)f->GetShape();
+				int32 vertexCount = poly->m_count;
+				b2Assert(vertexCount <= b2_maxPolygonVertices);
+				b2Vec2 vertices[b2_maxPolygonVertices];
+
+				for (int32 i = 0; i < vertexCount; ++i)
+				{
+					vertices[i] = b2Mul(xf, poly->m_vertices[i]);
+				}
+
+				RENDER->ddraw->DrawSolidPolygon(vertices, vertexCount, m_debugColorSectors);
+				break;
+			}
+
+			case b2Shape::e_edge:
+			{
+				b2EdgeShape* edge = (b2EdgeShape*)f->GetShape();
+				b2Vec2 v1 = b2Mul(xf, edge->m_vertex1);
+				b2Vec2 v2 = b2Mul(xf, edge->m_vertex2);
+				RENDER->ddraw->DrawSegment(v1, v2, m_debugColorWall);
+			}
+			break;
+		}
+	}
 }

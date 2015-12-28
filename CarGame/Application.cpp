@@ -117,7 +117,9 @@ void Application::draw()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glViewport(0, 0, SCREEN_SIZE_WIDTH, SCREEN_SIZE_HEIGHT);
 
-	m_physicsInfo.world->DrawDebugData();
+	//m_physicsInfo.world->DrawDebugData();
+	m_trackInfo->debugDraw();
+	m_raceManager->debugDraw();
 
 	drawDebugLines();
 

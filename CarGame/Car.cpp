@@ -5,11 +5,11 @@
 #include "Box2DDebugDraw.h"
 #include "Application.h"
 
-TopdownCar::TopdownCar(unsigned int id)
+TopdownCar::TopdownCar(unsigned int id, b2Color color)
 {
 	m_car					= new CarModel(PHYSX->world,id);
 	m_currentRaceSectorIdx	= 0;
-
+	m_debugColor			= color;
 	PHYSX->world->SetGravity(b2Vec2(0, 0));
 
 }
@@ -122,3 +122,22 @@ void TopdownCar::step()
 	
 }
 
+void TopdownCar::debugDraw()
+{
+	b2Body * body = m_car->getBody();
+	const b2Transform& xf = body->GetTransform();
+	for (b2Fixture* f = body->GetFixtureList(); f; f = f->GetNext())
+	{
+		b2PolygonShape* poly = (b2PolygonShape*)f->GetShape();
+		int32 vertexCount = poly->m_count;
+		b2Assert(vertexCount <= b2_maxPolygonVertices);
+		b2Vec2 vertices[b2_maxPolygonVertices];
+
+		for (int32 i = 0; i < vertexCount; ++i)
+		{
+			vertices[i] = b2Mul(xf, poly->m_vertices[i]);
+		}
+
+		RENDER->ddraw->DrawSolidPolygon(vertices, vertexCount, m_debugColor);
+	}
+}

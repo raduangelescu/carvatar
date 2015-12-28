@@ -1,8 +1,7 @@
 [RaceSettings]
 racers=[
-  {name="auto1", type="player"},
-  {name="auto2", type="basic_ai"},
-  {name="auto3", type="basic_ai"},
+  {name="auto1", type="player",  color={r=0.75,g=0.192,b=0.0}},
+  {name="auto2", type="basic_ai",color={r=1.0,g=0.98,b=0.81}},
 ]
 
 draw_raycast= true

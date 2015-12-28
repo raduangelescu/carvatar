@@ -24,6 +24,8 @@ struct SGenTrackNode
 
 class CTrack
 {
+	b2Color	m_debugColorSectors;
+	b2Color m_debugColorWall;
 	//Track settings
 	int		m_trackSize;
 	int		m_downStep;
@@ -65,6 +67,8 @@ public:
 	SGenTrackNode & getSectorPoint(const unsigned int idx);
 	unsigned int	getFinishLineRaceSectorIdx() { return m_finishLineRaceSectorIdx; }
 	b2Body*			getGroundBody() { return m_groundBody; }
+
+	void			debugDraw();
 	
 	void destroyPhysicsBody();
 	void clear();

@@ -22,5 +22,7 @@ public:
 	void handleContact(b2Contact* contact, bool began);
 	void carVsGroundArea(b2Fixture* tireFixture, b2Fixture* groundAreaFixture, bool began);
 
+	void debugDraw();
+
 
 };

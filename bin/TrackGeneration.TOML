@@ -12,3 +12,6 @@ hard_curvature_value = 20
 smooth_iterations = 400
 physics_wall_size_inner = [0.05,0.05]
 physics_wall_size_outer = [0.05,0.05]
+
+color_sectors = {r=1.0,g=0.6,b=0.0}
+color_wall    = {r=1.0,g=0.6,b=0.0}
