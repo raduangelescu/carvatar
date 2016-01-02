@@ -8,7 +8,8 @@ racers=[
   {name="BasicAI5", type="basic_ai",color={r=0.7,g=0.68,b=0.81},params=[0.8,20.0,0.05,4.0,0.0111]},
   {name="BasicAI6", type="basic_ai",color={r=0.6,g=0.58,b=0.81},params=[0.6,20.0,0.05,2.0,0.0111]},
 ]
-
+lap_number = 2
+max_race_time = 300000
 draw_raycast= true
 draw_intputs= true
 draw_outputs=true

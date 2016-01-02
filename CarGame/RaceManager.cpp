@@ -12,7 +12,9 @@
 
 RaceManager::RaceManager()
 {
-
+	m_startRaceTick = 0;
+	m_currentRaceTicks = 0;
+	m_isRaceEnded = false;
 }
 
 RaceManager::~RaceManager()
@@ -76,6 +78,8 @@ void RaceManager::loadRaceFromTOML(const char *filename)
 		i++;
 	}
 	
+	m_numLaps		= raceSettings->find("lap_number")->as<int>();
+	m_maxRaceTime	= raceSettings->find("max_race_time")->as<int>();
 	
 }
 
@@ -87,17 +91,37 @@ void RaceManager::keyEvent(const char key, bool pressed)
 
 void RaceManager::updateModels()
 {
+
+	bool shouldEndRace = true;
 	for (unsigned int i = 0; i < m_numRacers; i++)
 	{
+		if (!m_controllers[i]->getCar()->getHasFinishedRace())
+		{
+			shouldEndRace = false;
+		}
+		
 		m_controllers[i]->getCar()->step();
+		
+	}
+	if (shouldEndRace)
+		m_isRaceEnded = true;
+	if (m_currentRaceTicks >= m_maxRaceTime)
+	{
+		m_isRaceEnded = true;
 	}
 }
 
 void RaceManager::updateControllers()
 {
+	if (m_isRaceEnded)
+		return;
+
+	m_currentRaceTicks++;
+
 	for (unsigned int i = 0; i < m_numRacers; i++)
 	{
-		m_controllers[i]->fixedStepUpdate();
+		if (!m_controllers[i]->getCar()->getHasFinishedRace())
+			m_controllers[i]->fixedStepUpdate();
 	}
 }	
 
@@ -107,6 +131,29 @@ void RaceManager::handleContact(b2Contact* contact, bool began)
 	b2Fixture* b = contact->GetFixtureB();
 	FixtureUserData* fudA = (FixtureUserData*)a->GetUserData();
 	FixtureUserData* fudB = (FixtureUserData*)b->GetUserData();
+
+	if (a->GetFilterData().categoryBits == CATEGORY_STATIC && fudA == NULL)
+	{
+		if (fudB != NULL && fudB->getType() == FUD_CAR)
+		{
+			TopdownCar* car = getCarFromID(((CarFUD*)fudB)->getId());
+			if (car != NULL)
+			{
+				car->getFitnessData()->data[FT_NUMCRASHES]++;
+			}
+		}
+	}
+	if (b->GetFilterData().categoryBits == CATEGORY_STATIC && fudB == NULL)
+	{
+		if (fudA != NULL && fudA->getType() == FUD_CAR)
+		{
+			TopdownCar* car = getCarFromID(((CarFUD*)fudA)->getId());
+			if (car != NULL)
+			{
+				car->getFitnessData()->data[FT_NUMCRASHES]++;
+			}
+		}
+	}
 
 	if (!fudA || !fudB)
 		return;
@@ -118,6 +165,18 @@ void RaceManager::handleContact(b2Contact* contact, bool began)
 		carVsGroundArea(b, a, began);
 }
 
+TopdownCar * RaceManager::getCarFromID(unsigned int id)
+{
+	TopdownCar * car = NULL;
+	for (unsigned int i = 0; i < m_numRacers; i++)
+	{
+		car = m_controllers[i]->getCar();
+		car = (car->getCarModel()->getId() != id) ? NULL : car;
+		if (car != NULL)
+			return car;
+	}
+	return NULL;
+}
 
 void RaceManager::carVsGroundArea(b2Fixture* carFixture, b2Fixture* groundAreaFixture, bool began)
 {
@@ -125,13 +184,7 @@ void RaceManager::carVsGroundArea(b2Fixture* carFixture, b2Fixture* groundAreaFi
 	RaceSectorFUD*  gFUD  = (RaceSectorFUD*)groundAreaFixture->GetUserData();
 	
 	TopdownCar * car = NULL;
-	for (unsigned int i = 0; i < m_numRacers; i++)
-	{	
-		car = m_controllers[i]->getCar();
-		car = (car->getCarModel()->getId() != cFUD->getId()) ? NULL : car;
-		if (car != NULL)
-			break;
-	}
+	car = getCarFromID(cFUD->getId());
 
 	if (car != NULL)
 	{
@@ -144,6 +197,14 @@ void RaceManager::carVsGroundArea(b2Fixture* carFixture, b2Fixture* groundAreaFi
 		if (raceSector == (TRACK->getFinishLineRaceSectorIdx()))
 		{
 			raceSector = 0;
+			unsigned int newLap = car->getCurrentLap() + 1;
+			car->setCurrentLap(newLap);
+			if (newLap > m_numLaps)
+			{
+				car->getSensorData()->data[FT_INVERSELAPTIME] = 1.0f / m_currentRaceTicks;
+				car->setHasFinishedRace(true);
+			}
+
 			printf("RACE LAP FINISHED \n");
 		}
 

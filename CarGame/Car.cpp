@@ -12,6 +12,8 @@ TopdownCar::TopdownCar(unsigned int id, b2Color color)
 	m_debugColor			= color;
 	PHYSX->world->SetGravity(b2Vec2(0, 0));
 
+	m_hasFinishedRace = false;
+	m_currentLap = 0;
 }
 
 void TopdownCar::setPosition(b2Vec2 pos)

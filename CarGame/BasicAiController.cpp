@@ -11,7 +11,7 @@
 
 BasicAIController::BasicAIController()
 {
-
+	m_startRecord = false;
 }
 
 void BasicAIController::initController(TopdownCar * car)
@@ -28,6 +28,7 @@ void BasicAIController::initController(TopdownCar * car)
 
 void BasicAIController::keyEvent(unsigned char c, bool keypress)
 {
+	m_startRecord = true;
 }
 
 BasicAIController::~BasicAIController()
@@ -51,6 +52,8 @@ void BasicAIController::setParams(float *params)
 
 void BasicAIController::fixedStepUpdate()
 {
+	if (!m_startRecord)
+		return;
 	// Reset our current action
 	m_currentAction[OA_DOWN] = m_currentAction[OA_LEFT] = m_currentAction[OA_RIGHT] = m_currentAction[OA_UP] = -1.0f;
 	
