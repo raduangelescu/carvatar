@@ -11,7 +11,7 @@
 
 BasicAIController::BasicAIController()
 {
-	m_startRecord = false;
+	m_startRecord = true;
 }
 
 void BasicAIController::initController(TopdownCar * car)

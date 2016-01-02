@@ -99,6 +99,7 @@
     <ClInclude Include="BasicAIController.h" />
     <ClInclude Include="Box2DDebugDraw.h" />
     <ClInclude Include="Car.h" />
+    <ClInclude Include="DifferentialEvolution.h" />
     <ClInclude Include="RaceManager.h" />
     <ClInclude Include="CarModel.h" />
     <ClInclude Include="Common.h" />
@@ -117,6 +118,7 @@
     <ClCompile Include="BasicAiController.cpp" />
     <ClCompile Include="Box2DDebugDraw.cpp" />
     <ClCompile Include="Car.cpp" />
+    <ClCompile Include="DifferentialEvolution.cpp" />
     <ClCompile Include="IController.cpp" />
     <ClCompile Include="RaceManager.cpp" />
     <ClCompile Include="Main.cpp" />

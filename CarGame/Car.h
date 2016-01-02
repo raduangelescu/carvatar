@@ -24,9 +24,10 @@ struct FitnessData
 	float ComputeFitness()
 	{
 		float empiricalWeights[FT_NUM];
-		empiricalWeights[FT_NUMCRASHES]		= -100.0f;
-		empiricalWeights[FT_INVERSELAPTIME] = 100.0f;
-
+		empiricalWeights[FT_NUMCRASHES]		= -0.01f;
+		empiricalWeights[FT_INVERSELAPTIME] = 1000.0f;
+		empiricalWeights[FT_DISTANCELEFT]   = 100.0f;
+		
 		float fitness = 0;
 		// dot product
 		for (unsigned int i = 0; i < FT_NUM; i++)
@@ -55,6 +56,7 @@ public:
 	~TopdownCar();
 
 	void step();
+	void reset();
 	void setAction(float *currentAction);
 
 	b2Vec2 getPosition();
@@ -74,6 +76,7 @@ public:
 	unsigned int   getCurrentRaceSectorIdx()				{ return m_currentRaceSectorIdx; }
 	void		   setCurrentRaceSectorIdx(unsigned int s) { m_currentRaceSectorIdx = s; }
 
+	void setDebugColor(b2Color	&color){ m_debugColor = color; }
 	void debugDraw();
 
 };

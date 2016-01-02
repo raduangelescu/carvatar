@@ -5,7 +5,7 @@ class TopdownCar;
 
 class RaceManager : public b2ContactListener
 {
-private:
+protected:
 	IController   ** m_controllers;
 	unsigned int	m_numRacers;
 	unsigned int	m_numLaps;
@@ -21,11 +21,13 @@ public:
 	RaceManager();
 	~RaceManager();
 
+	virtual void init();
+
 	void keyEvent(const char key, bool pressed);
 	void loadRaceFromTOML(const char *filename);
 
-	void updateControllers();
-	void updateModels();
+	virtual void updateControllers();
+	virtual void updateModels();
 
 	void BeginContact(b2Contact* contact) { handleContact(contact, true); }
 	void EndContact(b2Contact* contact) { handleContact(contact, false); }

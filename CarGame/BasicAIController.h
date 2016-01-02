@@ -1,19 +1,20 @@
 #pragma once
 #include "IController.h"
 
+enum EBASICAI
+{
+	EBASICAI_MAXSPEED,
+	EBASICAI_ANGLETOTURN,
+	EBASICAI_DISTANCETOFRONTWALL_STOP,
+	EBASICAI_LOOKAHEAD_DISTANCE,
+	EBASICAI_ANGLETOTURNSPEEDINFLUENCE,
+
+	EBASICAI_NUM
+};
+
+
 class BasicAIController : public IController
 {
-	enum EBASICAI
-	{
-		EBASICAI_MAXSPEED,
-		EBASICAI_ANGLETOTURN,
-		EBASICAI_DISTANCETOFRONTWALL_STOP,
-		EBASICAI_LOOKAHEAD_DISTANCE,
-		EBASICAI_ANGLETOTURNSPEEDINFLUENCE,
-
-		EBASICAI_NUM
-	};
-
 	float m_params[EBASICAI_NUM];
 
 public:
@@ -25,6 +26,7 @@ public:
 	
 	void setParams(float maxspeed, float angletoturn, float distancetofrontwallstop, float lookahead, float angletoturnspeedinfluence);
 	void setParams(float *params);
+	float* getParams() { return m_params; }
 
 	~BasicAIController();
 

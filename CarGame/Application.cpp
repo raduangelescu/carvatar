@@ -6,6 +6,7 @@
 #include "Track.h"
 #include "Car.h"
 #include "RaceManager.h"
+#include "DifferentialEvolution.h"
 
 class DestructionListener : public b2DestructionListener
 {
@@ -29,7 +30,9 @@ Application::Application()
 	m_physicsInfo.world = new b2World(b2Vec2(0.0f, 0.0f));
 	m_renderInfo.ddraw = new Box2DDebugDraw(1.0f);
 	m_trackInfo			= new CTrack();
-	m_raceManager		= new RaceManager();
+	
+	//m_raceManager = new RaceManager();
+	m_raceManager = new DifferentialEvolution();
 
 	m_isRunning = true;
 }
@@ -89,7 +92,7 @@ void Application::init()
 	srand(m_randomRoot);
 	
 	m_trackInfo->genTrack();
-	m_raceManager->loadRaceFromTOML("racesetup.TOML");
+	m_raceManager->init();
 	m_trackInfo->genPhysicsTrackRepresentation();
 
 	m_physicsInfo.world->SetContactListener(m_raceManager);

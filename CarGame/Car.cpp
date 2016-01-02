@@ -16,6 +16,13 @@ TopdownCar::TopdownCar(unsigned int id, b2Color color)
 	m_currentLap = 0;
 }
 
+void TopdownCar::reset()
+{
+	m_currentRaceSectorIdx = 0;
+	m_hasFinishedRace = false;
+	m_currentLap = 0;
+}
+
 void TopdownCar::setPosition(b2Vec2 pos)
 {
 	m_car->setPosition(pos);
@@ -96,7 +103,7 @@ void TopdownCar::step()
 	//normalized
 	static float maxDistance = TRACK->getDistanceToFinishLine(0);
  	m_sensorData.data[IS_LEFTDISTANCE] = TRACK->getDistanceToFinishLine(m_currentRaceSectorIdx)/ maxDistance; 
-	
+	m_fitnessData.data[FT_DISTANCELEFT] = maxDistance - TRACK->getDistanceToFinishLine(m_currentRaceSectorIdx) + m_currentLap * maxDistance;
 	b2Vec2 trackdirection = sector.direction;
 	b2Vec2 cardirection = m_car->getDirection();
 	//normalized?

@@ -46,6 +46,9 @@
       <Filter>Manager</Filter>
     </ClInclude>
     <ClInclude Include="Application.h" />
+    <ClInclude Include="DifferentialEvolution.h">
+      <Filter>Manager\ML</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
@@ -84,6 +87,9 @@
       <Filter>Controllers</Filter>
     </ClCompile>
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="DifferentialEvolution.cpp">
+      <Filter>Manager\ML</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="CarPhysics">
@@ -103,6 +109,9 @@
     </Filter>
     <Filter Include="Manager">
       <UniqueIdentifier>{2f5621db-a053-44e5-a474-3faa3781b72b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Manager\ML">
+      <UniqueIdentifier>{1cce86ba-cc8b-4709-bfc4-1f949aa25439}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

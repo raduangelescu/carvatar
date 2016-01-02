@@ -24,6 +24,11 @@ RaceManager::~RaceManager()
 	delete[] m_controllers;
 }
 
+void RaceManager::init()
+{
+	loadRaceFromTOML("racesetup.TOML");
+}
+
 void RaceManager::loadRaceFromTOML(const char *filename)
 {
 	std::ifstream ifs(filename);
@@ -201,10 +206,9 @@ void RaceManager::carVsGroundArea(b2Fixture* carFixture, b2Fixture* groundAreaFi
 			car->setCurrentLap(newLap);
 			if (newLap > m_numLaps)
 			{
-				car->getSensorData()->data[FT_INVERSELAPTIME] = 1.0f / m_currentRaceTicks;
 				car->setHasFinishedRace(true);
 			}
-
+			car->getFitnessData()->data[FT_INVERSELAPTIME] = car->getFitnessData()->data[FT_INVERSELAPTIME] + 1.0f/m_currentRaceTicks;
 			printf("RACE LAP FINISHED \n");
 		}
 

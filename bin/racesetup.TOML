@@ -2,11 +2,8 @@
 racers=[
   {name="Player", type="player",  color={r=0.75,g=0.192,b=0.0}},
   {name="BasicAI1", type="basic_ai",color={r=1.0,g=0.98,b=0.81},params=[1.0,10.0,0.05,5.0,0.0111]},
-  {name="BasicAI2", type="basic_ai",color={r=1.0,g=0.98,b=0.61},params=[0.7,10.0,0.05,5.0,0.0111]},
-  {name="BasicAI3", type="basic_ai",color={r=0.9,g=0.88,b=0.81},params=[0.8,20.0,0.05,5.0,0.0111]},
-  {name="BasicAI4", type="basic_ai",color={r=0.8,g=0.78,b=0.81},params=[0.8,20.0,0.08,2.0,0.0111]},
-  {name="BasicAI5", type="basic_ai",color={r=0.7,g=0.68,b=0.81},params=[0.8,20.0,0.05,4.0,0.0111]},
-  {name="BasicAI6", type="basic_ai",color={r=0.6,g=0.58,b=0.81},params=[0.6,20.0,0.05,2.0,0.0111]},
+  {name="BasicAI2", type="basic_ai",color={r=1.0,g=0.98,b=0.61},params=[0.993,7.0,0.06757,8.0,0.0003]},
+
 ]
 lap_number = 2
 max_race_time = 300000
