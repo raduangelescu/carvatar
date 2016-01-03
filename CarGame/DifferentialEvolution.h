@@ -24,14 +24,9 @@ class DifferentialEvolution : public RaceManager
 	int m_populationSize;
 	float m_differentialWeight;
 	float m_crossoverProbability;
-	float m_F;
-
-	void initGenome();
-	void initPopulation();
-
-	int pickUnique(int *blackList, int size);
-	void crossover(TopdownCar *a, TopdownCar *b, TopdownCar *c);
-
+	
+	void loadRaceFromTOML(const char *filename);
+	int pickUnique(int *blackList, int size);	
 	void stepDifferential();
 	void evolve();
 
@@ -43,7 +38,6 @@ public:
 	virtual void init();
 
 	virtual void updateControllers();
-	virtual void updateModels();
 
 
 };

@@ -19,7 +19,7 @@ protected:
 
 public:
 	RaceManager();
-	~RaceManager();
+	virtual ~RaceManager();
 
 	virtual void init();
 
@@ -37,7 +37,7 @@ public:
 
 	TopdownCar * getCarFromID(unsigned int id);
 
-	void debugDraw();
+	virtual void debugDraw();
 
 
 };

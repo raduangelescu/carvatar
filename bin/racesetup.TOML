@@ -10,3 +10,11 @@ max_race_time = 300000
 draw_raycast= true
 draw_intputs= true
 draw_outputs=true
+
+[DifferentialEvolution]
+max_iterations= 50
+lap_number = 1000
+max_race_time = 500
+population_size= 100
+differential_weight = 1.0
+crossover_probability= 0.5
